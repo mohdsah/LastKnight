@@ -660,48 +660,53 @@ const Audio = (() => {
         roarG.gain.linearRampToValueAtTime(0.001, t + 1.2);
         roar.connect(roarG); roarG.connect(sfxGain); roar.start(t); roar.stop(t + 1.3);
         break;
-      case 'elixir':
+      }
+
+      case 'elixir': {
         // Elixir guna — bubble pop magic
-        t.oscillator.type='sine';
-        t.oscillator.frequency.setValueAtTime(600,t.ctx.currentTime);
-        t.oscillator.frequency.exponentialRampToValueAtTime(1200,t.ctx.currentTime+.15);
-        t.gain.gain.setValueAtTime(.25,t.ctx.currentTime);
-        t.gain.gain.exponentialRampToValueAtTime(.001,t.ctx.currentTime+.3);
-        t.oscillator.start(t.ctx.currentTime);
-        t.oscillator.stop(t.ctx.currentTime+.3);
+        const eo = ctx.createOscillator(), eg = ctx.createGain();
+        eo.type = 'sine';
+        eo.frequency.setValueAtTime(600, t);
+        eo.frequency.exponentialRampToValueAtTime(1200, t + .15);
+        eg.gain.setValueAtTime(.25 * settings.sfxVol, t);
+        eg.gain.exponentialRampToValueAtTime(0.001, t + .3);
+        eo.connect(eg); eg.connect(sfxGain); eo.start(t); eo.stop(t + .32);
         break;
-      case 'revive':
+      }
+
+      case 'revive': {
         // Revive stone — dramatic rise
-        t.oscillator.type='sawtooth';
-        t.oscillator.frequency.setValueAtTime(200,t.ctx.currentTime);
-        t.oscillator.frequency.exponentialRampToValueAtTime(800,t.ctx.currentTime+.6);
-        t.gain.gain.setValueAtTime(.35,t.ctx.currentTime);
-        t.gain.gain.exponentialRampToValueAtTime(.001,t.ctx.currentTime+.8);
-        t.oscillator.start(t.ctx.currentTime);
-        t.oscillator.stop(t.ctx.currentTime+.8);
+        const ro = ctx.createOscillator(), rg = ctx.createGain();
+        ro.type = 'sawtooth';
+        ro.frequency.setValueAtTime(200, t);
+        ro.frequency.exponentialRampToValueAtTime(800, t + .6);
+        rg.gain.setValueAtTime(.35 * settings.sfxVol, t);
+        rg.gain.exponentialRampToValueAtTime(0.001, t + .8);
+        ro.connect(rg); rg.connect(sfxGain); ro.start(t); ro.stop(t + .82);
         break;
-      case 'buff':
+      }
+
+      case 'buff': {
         // Buff aktif — positive chime
-        t.oscillator.type='triangle';
-        t.oscillator.frequency.setValueAtTime(440,t.ctx.currentTime);
-        t.oscillator.frequency.setValueAtTime(550,t.ctx.currentTime+.1);
-        t.oscillator.frequency.setValueAtTime(660,t.ctx.currentTime+.2);
-        t.gain.gain.setValueAtTime(.2,t.ctx.currentTime);
-        t.gain.gain.exponentialRampToValueAtTime(.001,t.ctx.currentTime+.4);
-        t.oscillator.start(t.ctx.currentTime);
-        t.oscillator.stop(t.ctx.currentTime+.4);
+        [440, 550, 660].forEach((freq, i) => {
+          const bo = ctx.createOscillator(), bg = ctx.createGain();
+          bo.type = 'triangle'; bo.frequency.value = freq;
+          bg.gain.setValueAtTime(.18 * settings.sfxVol, t + i*.08);
+          bg.gain.exponentialRampToValueAtTime(0.001, t + i*.08 + .25);
+          bo.connect(bg); bg.connect(sfxGain); bo.start(t + i*.08); bo.stop(t + i*.08 + .28);
+        });
         break;
-      case 'set_bonus':
+      }
+
+      case 'set_bonus': {
         // Set bonus unlock — epic fanfare
-        t.oscillator.type='square';
-        t.oscillator.frequency.setValueAtTime(330,t.ctx.currentTime);
-        t.oscillator.frequency.setValueAtTime(440,t.ctx.currentTime+.1);
-        t.oscillator.frequency.setValueAtTime(550,t.ctx.currentTime+.2);
-        t.oscillator.frequency.setValueAtTime(660,t.ctx.currentTime+.3);
-        t.gain.gain.setValueAtTime(.2,t.ctx.currentTime);
-        t.gain.gain.exponentialRampToValueAtTime(.001,t.ctx.currentTime+.6);
-        t.oscillator.start(t.ctx.currentTime);
-        t.oscillator.stop(t.ctx.currentTime+.6);
+        [330, 440, 550, 660].forEach((freq, i) => {
+          const so = ctx.createOscillator(), sg = ctx.createGain();
+          so.type = 'square'; so.frequency.value = freq;
+          sg.gain.setValueAtTime(.16 * settings.sfxVol, t + i*.1);
+          sg.gain.exponentialRampToValueAtTime(0.001, t + i*.1 + .3);
+          so.connect(sg); sg.connect(sfxGain); so.start(t + i*.1); so.stop(t + i*.1 + .32);
+        });
         break;
       }
     }

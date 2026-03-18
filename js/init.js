@@ -8,7 +8,7 @@
 
 window.PT_VERSION   = '6.1';
 window.PT_BUILDDATE = '2026-03-16';
-console.log('%c⚔ Pahlawan Terakhir v5.0', 'color:#c9a84c;font-size:14px;font-weight:bold');
+console.log(`%c⚔ Pahlawan Terakhir v${window.PT_VERSION||'6.1'}`, 'color:#c9a84c;font-size:14px;font-weight:bold');
 
 // ── Safe queue system ─────────────────────────────────
 window._ready = false;

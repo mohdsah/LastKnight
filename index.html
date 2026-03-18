@@ -656,6 +656,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 <script src="js/inn-upgrade.js"></script>
 <script src="js/powerup-store.js"></script>
 <script src="js/pvp-guild-quest.js"></script>
+<script src="js/features.js"></script>
 
 <!-- ══ Maps: Zone & Boss Extensions (selepas data.js) ══ -->
 <script src="js/maps/zones.js"></script>
@@ -671,6 +672,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 <script src="js/systems/worldboss.js"></script>
 <script src="js/systems/portraits.js"></script>
 <script src="js/systems/sprites.js"></script>
+<script src="js/systems/hero-sprite.js"></script>
+<script src="js/systems/tiles.js"></script>
 <script src="js/systems/items.js"></script>
 
  <script>
@@ -1021,8 +1024,15 @@ document.addEventListener('DOMContentLoaded', handleOrientation);
 // ── 5. Fullscreen bila game start ────────────────────
 function requestFullscreen() {
   const el = document.documentElement;
-  if (el.requestFullscreen) el.requestFullscreen();
-  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  try {
+    if (el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    // else: not supported — silently skip
+  } catch(e) {
+    // Fullscreen not supported on this device — ignore
+  }
 }
 // Auto fullscreen pada first tap
 let fullscreenDone = false;

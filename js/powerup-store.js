@@ -805,7 +805,9 @@ function _hookPSSave() {
       try { ch.costumes = JSON.parse(ch.skill_tree['_costumes'] || '[]'); } catch { ch.costumes = []; }
     }
     return ch;
-};
+  };
+}
+_hookPSSave();
 
 // ── Exports ──
 window.openPowerUpStore = openPowerUpStore;

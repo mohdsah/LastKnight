@@ -3,7 +3,7 @@
    Cache semua fail untuk offline play
    ═══════════════════════════════════════════════════ */
 
-const CACHE_NAME  = 'pahlawan-terakhir-v16';
+const CACHE_NAME  = 'pahlawan-terakhir-v18';
 const CACHE_FILES = [
   '/',
   './index.html',
@@ -52,6 +52,19 @@ const CACHE_FILES = [
   './js/systems/sprites.js',
   './images/sprites/monsters_sheet.jpg',
   './images/sprites/rpg_tileset.png',
+  // Hero sprites 8-arah
+  './images/hero/walk/walk_00000.png',
+  './images/hero/walk/walk_10000.png',
+  './images/hero/walk/walk_20000.png',
+  './images/hero/walk/walk_30000.png',
+  './images/hero/walk/walk_40000.png',
+  './images/hero/walk/walk_50000.png',
+  './images/hero/walk/walk_60000.png',
+  './images/hero/walk/walk_70000.png',
+  './images/tiles/grass.png',
+  './images/tiles/dirt.png',
+  './images/tiles/magma.png',
+  './images/tiles/snow.png',
   './images/sprites/knight_warrior.png',
   './images/sprites/knight_helmet.png',
   './images/sprites/hero_rogue_f.png',
