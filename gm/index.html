@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#04030a">
+<title>⚔ GM Panel — Pahlawan Terakhir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gm.css">
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">⚔</div>
+    <div class="login-title">Pahlawan Terakhir</div>
+    <div class="login-subtitle">GAME MASTER PANEL</div>
+    <div class="login-ver">v5.3</div>
+    <input class="login-inp" id="gmUser" placeholder="Username GM..." autocomplete="username">
+    <input class="login-inp" id="gmPass" placeholder="Password..." type="password"
+           onkeydown="if(event.key==='Enter')gmLogin()">
+    <button class="login-btn" onclick="gmLogin()">🔐 Log Masuk</button>
+    <div id="loginStatus" style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:.68rem;text-align:center"></div>
+  </div>
+</div>
+
+<!-- ══ GM PANEL ══ -->
+<div id="gmPanel">
+  <div class="gm-wrap">
+
+    <!-- ── SIDEBAR ── -->
+    <div class="sidebar">
+      <div class="sb-brand">
+        <div class="sb-brand-title">⚔ Pahlawan Terakhir</div>
+        <div class="sb-brand-sub">GAME MASTER PANEL</div>
+        <div class="sb-gm-info">
+          <div class="sb-gm-name" id="gmBadge">🛡️ —</div>
+          <div class="sb-online">
+            <span class="sb-online-dot"></span>
+            <span id="ocnt">0</span>&nbsp;online
+          </div>
+        </div>
+      </div>
+
+      <nav class="sb-nav">
+        <div class="sb-section">Overview</div>
+        <div class="sb-item active" onclick="showPage('dashboard')">
+          <span class="si-icon">📊</span>Dashboard
+        </div>
+        <div class="sb-item" onclick="showPage('players')">
+          <span class="si-icon">👥</span>Senarai Player
+        </div>
+
+        <div class="sb-section">Edit Player</div>
+        <div class="sb-item" onclick="showPage('editPlayer')">
+          <span class="si-icon">✏️</span>Edit Stat & Level
+        </div>
+        <div class="sb-item" onclick="showPage('editInventory')">
+          <span class="si-icon">🎒</span>Edit Inventory
+        </div>
+        <div class="sb-item" onclick="showPage('statInvestor')">
+          <span class="si-icon">📈</span>Stat Investor
+        </div>
+        <div class="sb-item" onclick="showPage('giveItem')">
+          <span class="si-icon">🎁</span>Bagi Item
+        </div>
+
+        <div class="sb-section">Pengurusan</div>
+        <div class="sb-item" onclick="showPage('topupMgmt')">
+          <span class="si-icon">💎</span>Top-Up Manager
+        </div>
+        <div class="sb-item" onclick="showPage('banList')">
+          <span class="si-icon">🚫</span>Ban / Unban
+        </div>
+        <div class="sb-item" onclick="showPage('broadcast')">
+          <span class="si-icon">📢</span>Broadcast
+        </div>
+        <div class="sb-item" onclick="showPage('gmLog')">
+          <span class="si-icon">📋</span>Log GM
+        </div>
+      </nav>
+
+      <div class="sb-footer">
+        <button class="sb-logout" onclick="gmLogout()">⏻ Log Keluar</button>
+      </div>
+    </div>
+
+    <!-- ── CONTENT ── -->
+    <div class="content" id="mainContent">
+      <div id="pageContainer">
+        <div style="text-align:center;padding:60px 20px;color:var(--muted)">
+          <div style="font-size:3rem">⏳</div>
+          <div style="font-family:'Cinzel',serif;margin-top:10px">Memuatkan...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ CONFIRM MODAL ══ -->
+<div class="modal off" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-title" id="confirmTitle">Sahkan Tindakan</div>
+    <div class="modal-msg" id="confirmMsg">Adakah anda pasti?</div>
+    <div class="modal-btns">
+      <button class="btn btn-dim" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-gold" id="confirmOk">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS ══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="gm.js"></script>
+</body>
+</html>

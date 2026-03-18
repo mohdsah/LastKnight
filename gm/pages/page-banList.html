@@ -1,0 +1,38 @@
+<div class="page active" id="page-banList">
+  <div class="page-header"><div class="page-title">🚫 Ban / Unban Player</div><div class="page-sub">Urus senarai ban dan sekat akaun</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-header"><div class="card-title">🚫 Ban Player</div></div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Nama Watak</label><input class="gm-inp" id="banName" placeholder="Nama watak..."></div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label">Sebab</label>
+          <select class="gm-sel" id="banReasonPreset" onchange="if(this.value)$el('banReason').value=this.value">
+            <option value="">-- Pilih Sebab --</option>
+            <option value="Menggunakan cheat/hack">Menggunakan cheat/hack</option>
+            <option value="Melanggar peraturan game">Melanggar peraturan game</option>
+            <option value="Spam/mengganggu pemain lain">Spam/mengganggu pemain lain</option>
+            <option value="Eksploitasi bug">Eksploitasi bug</option>
+            <option value="Bahasa lucah/kesat">Bahasa lucah/kesat</option>
+            <option value="Penipuan/scam">Penipuan/scam</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Sebab (tulis sendiri)</label><input class="gm-inp" id="banReason" placeholder="Detail sebab ban..."></div>
+        <button class="btn btn-red btn-full" onclick="doBan()">🚫 Ban Player</button>
+        <div class="status-msg" id="banStatus" style="margin-top:6px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 Senarai Banned</div>
+        <button class="btn btn-dim btn-xs" onclick="loadBanList()">↺</button>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="gm-table">
+          <thead><tr><th>Nama</th><th>Sebab</th><th>Tarikh</th><th>Aksi</th></tr></thead>
+          <tbody id="banTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="page active" id="page-gmLog">
+  <div class="page-header"><div class="page-title">📋 Log Aktiviti GM</div><div class="page-sub">Rekod semua tindakan GM</div></div>
+  <div class="card">
+    <div class="card-body" style="padding:10px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="search-inp" id="logSearch" placeholder="Cari aksi/target..." oninput="filterLog()" style="flex:1;min-width:160px">
+        <select class="gm-sel" id="logActionFilter" onchange="filterLog()" style="flex:0 0 auto;width:150px">
+          <option value="">Semua Aksi</option>
+          <option value="login">Login</option>
+          <option value="edit_player">Edit Player</option>
+          <option value="give_item">Give Item</option>
+          <option value="ban">Ban</option>
+          <option value="unban">Unban</option>
+          <option value="broadcast">Broadcast</option>
+          <option value="grant_points">Grant Points</option>
+          <option value="approve_topup">Approve TopUp</option>
+          <option value="teleport">Teleport</option>
+        </select>
+        <button class="btn btn-gold btn-sm" onclick="loadGMLog()">↺ Refresh</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body" style="padding:0">
+      <table class="gm-table">
+        <thead><tr><th>Aksi</th><th>GM</th><th>Target</th><th>Detail</th><th>Masa</th></tr></thead>
+        <tbody id="gmLogBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>

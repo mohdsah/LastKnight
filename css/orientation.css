@@ -1,0 +1,149 @@
+/* ════════════════════════════════════════════════════════
+   Pahlawan Terakhir — Orientation CSS v2.0
+   Portrait & Landscape Responsive Layout
+   ════════════════════════════════════════════════════════ */
+
+/* ══ PORTRAIT (default) ═══════════════════════════ */
+@media screen and (orientation: portrait) {
+  #skillBar    { bottom:0; left:0; right:0; top:auto; flex-direction:row; }
+  #chatBox     { bottom:135px; left:0; width:min(280px,70vw); }
+  #hud         { top:max(0px,env(safe-area-inset-top,0px)); left:0; right:0; bottom:auto; }
+  #minimap     { top:5px; left:50%; transform:translateX(-50%); right:auto; }
+  #topBtns     { top:5px; left:50%; transform:translateX(-50%); }
+  #bossTimerPanel { right:6px; top:80px; left:auto; bottom:auto; }
+  #activeBuff  { bottom:148px; left:50%; transform:translateX(-50%); top:auto; }
+  #autoAimBtn  { top:10px; right:52px; }
+}
+
+/* ══ LANDSCAPE ════════════════════════════════════ */
+@media screen and (orientation: landscape) {
+  /* Skill bar — kanan bawah, compact vertical */
+  #skillBar {
+    bottom:0; right:0; left:auto;
+    width:auto; top:auto;
+    flex-direction:column;
+    align-items:flex-end;
+    padding:4px 6px 6px;
+    border-top:1px solid rgba(201,168,76,.12);
+    border-left:1px solid rgba(201,168,76,.08);
+    border-radius:var(--r-md) 0 0 0;
+    gap:4px;
+    min-width:0;
+  }
+  /* Hide sb-mid in landscape (buttons use fixed positioning) */
+  #skillBar .sb-mid { display:none; }
+
+  /* Joystick — kiri bawah, fixed */
+  .sb-joystick {
+    position:fixed; left:6px; bottom:6px;
+    width:90px; height:90px;
+    z-index:12;
+  }
+
+  /* Skill slots smaller in landscape */
+  .sk-slot { width:44px; height:44px; font-size:1rem; }
+  .sk-atk  { width:52px; height:52px; font-size:1.2rem; }
+
+  /* Right buttons column */
+  .sb-right { flex-direction:column; gap:4px; }
+  .sb-icon-btn { width:34px; height:34px; }
+
+  /* Attack button — kanan, tengah */
+  #atBtn { position:fixed; right:12px; bottom:88px; z-index:12; }
+
+  /* SP buttons — bawah kanan row */
+  #spBtn  { position:fixed; right:116px; bottom:10px; z-index:12; }
+  #sp2Btn { position:fixed; right:72px;  bottom:10px; z-index:12; }
+  #sp3Btn { position:fixed; right:28px;  bottom:10px; z-index:12; }
+  #sp4Btn { position:fixed; right:12px;  bottom:54px; z-index:12; }
+
+  /* HUD — kompak */
+  #hud         { padding:2px 6px 0; }
+  .hud-bars    { flex-direction:column; gap:1px; }
+  .hud-brow    { gap:3px; }
+  .hud-bv      { font-size:.44rem; }
+  .hud-wnum    { font-size:.9rem; }
+
+  /* Minimap — kanan atas */
+  #minimap     { top:3px; right:95px; left:auto; transform:none; }
+
+  /* Top buttons — tengah atas */
+  #topBtns     { top:3px; left:50%; transform:translateX(-50%); }
+
+  /* Chat box — kiri bawah, kecil */
+  #chatBox     { bottom:100px; left:0; width:min(200px,38vw); }
+
+  /* Boss timer — kiri atas */
+  #bossTimerPanel { top:3px; left:6px; right:auto; }
+
+  /* Active buffs */
+  #activeBuff  { bottom:110px; left:50%; transform:translateX(-50%); }
+
+  /* NPC dialog */
+  #npcDialog   { bottom:100px; }
+
+  /* Exp bar */
+  .exp-bar-full { height:3px !important; }
+
+  /* Auto-aim */
+  #autoAimBtn  { top:3px; right:44px; }
+
+  /* Zone banner */
+  
+
+  /* Ingame menu */
+  #ingameMenu  { max-height:70vh; overflow-y:auto; }
+  .igm-grid    { grid-template-columns:repeat(6,1fr) !important; gap:4px !important; }
+  .igm-icon    { font-size:1.1rem !important; }
+  .igm-label   { font-size:.55rem !important; }
+}
+
+  /* Quick Elixir Button — landscape */
+  #quickElixirBtn { position:fixed; right:54px; bottom:56px; }
+
+  /* Online pill — adjust to avoid minimap overlap */
+  #opill { right:auto; left:130px; top:3px; }
+
+  /* PK status — adjust for landscape */
+  #pkStatus { top:3px; right:6px; font-size:.52rem; }
+
+  /* Zone banner — smaller in landscape */
+  #zoneBanner { top:28px; font-size:clamp(.65rem,1.8vw,.85rem); letter-spacing:.2em; }
+
+  /* NW HUD — landscape */
+  #nwHud { top:24px; }
+
+  /* Party HUD — landscape */
+  #partyHud { top:3px; left:140px; }
+
+  /* Boss timer — landscape */
+  #bossTimerPanel { top:3px; left:4px; right:auto; }
+
+  /* Save indicator — landscape */
+  #saveIndicator { bottom:70px; right:8px; }
+
+  /* World boss HUD — landscape */
+  #worldBossHud { transform:translate(-50%,-50%) scale(.85); }
+
+
+/* ══ SAFE AREAS (iPhone notch, etc) ══════════════ */
+body {
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+}
+@media screen and (orientation: landscape) {
+  body {
+    padding-left:  env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+  }
+}
+
+/* ══ REDUCE MOTION ════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:.01ms !important;
+    transition-duration:.01ms !important;
+  }
+}

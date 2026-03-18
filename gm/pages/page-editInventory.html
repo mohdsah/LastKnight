@@ -1,0 +1,27 @@
+<div class="page active" id="page-editInventory">
+  <div class="page-header"><div class="page-title">🎒 Edit Inventory</div><div class="page-sub">Lihat, tambah dan buang item dalam bag player</div></div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">🔍 Cari Player</div></div>
+    <div class="card-body">
+      <div class="search-row">
+        <input class="search-inp" id="invSearch" placeholder="Nama watak..." onkeydown="if(event.key==='Enter')searchInvPlayer()">
+        <button class="btn btn-gold btn-sm" onclick="searchInvPlayer()" style="flex:0 0 auto">Cari</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="invEditCard" style="display:none">
+    <div class="card-header">
+      <div class="card-title">🎒 Inventory: <span id="invPlayerName" style="color:var(--gold2)">—</span></div>
+      <button class="btn btn-dim btn-xs" onclick="showInvTab(invCurrentTab||'bag')">↺</button>
+    </div>
+    <div class="card-body">
+      <div class="tab-row">
+        <button class="tab-btn active inv-tab-btn" data-tab="bag"    onclick="showInvTab('bag')">🎒 Bag</button>
+        <button class="tab-btn inv-tab-btn"         data-tab="equip"  onclick="showInvTab('equip')">⚔️ Equipment</button>
+        <button class="tab-btn inv-tab-btn"         data-tab="add"    onclick="showInvTab('add')">➕ Tambah</button>
+      </div>
+      <div id="invTabContent"></div>
+      <div class="status-msg" id="invStatus" style="margin-top:8px"></div>
+    </div>
+  </div>
+</div>

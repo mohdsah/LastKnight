@@ -1,0 +1,47 @@
+<div class="page active" id="page-broadcast">
+  <div class="page-header"><div class="page-title">📢 Broadcast Mesej</div><div class="page-sub">Hantar mesej kepada semua player online</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-header"><div class="card-title">📝 Tulis Mesej</div></div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label">Jenis Mesej</label>
+          <select class="gm-sel" id="broadcastType">
+            <option value="info">ℹ️ Info</option>
+            <option value="warning">⚠️ Amaran</option>
+            <option value="event">🎉 Event</option>
+            <option value="system">⚙️ System</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label">Mesej</label>
+          <textarea class="gm-inp" id="broadcastMsg" rows="4" placeholder="Tulis mesej broadcast..."></textarea>
+        </div>
+        <div style="margin-bottom:10px">
+          <label class="form-label">Template Pantas</label>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">
+            <span class="template-chip" onclick="setTemplate('maintenance')">⚠️ Maintenance</span>
+            <span class="template-chip" onclick="setTemplate('event')">🎉 Event</span>
+            <span class="template-chip" onclick="setTemplate('update')">🔄 Update</span>
+            <span class="template-chip" onclick="setTemplate('warning')">🚨 Amaran</span>
+            <span class="template-chip" onclick="setTemplate('welcome')">⚔️ Welcome</span>
+          </div>
+        </div>
+        <button class="btn btn-gold btn-full" onclick="doBroadcast()">📢 Hantar Sekarang</button>
+        <div class="status-msg" id="broadcastStatus" style="margin-top:6px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📜 Sejarah Broadcast</div>
+        <button class="btn btn-dim btn-xs" onclick="loadBroadcastHistory()">↺</button>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="gm-table">
+          <thead><tr><th>Mesej</th><th>GM</th><th>Masa</th></tr></thead>
+          <tbody id="broadcastHistory"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

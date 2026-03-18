@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panduan Buat APK — Pahlawan Terakhir</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:#06060e; color:#e8dcc8;
+    font-family:'Segoe UI',sans-serif; font-size:15px; line-height:1.7;
+    padding:20px; max-width:720px; margin:0 auto;
+  }
+  h1 { font-size:1.5rem; color:#c9a84c; margin:24px 0 8px; letter-spacing:.05em; }
+  h2 { font-size:1.1rem; color:#c9a84c; margin:20px 0 6px; }
+  h3 { font-size:.95rem; color:#e8dcc8; margin:14px 0 4px; }
+  .badge {
+    display:inline-block; background:rgba(201,168,76,.15);
+    border:1px solid rgba(201,168,76,.4); border-radius:4px;
+    padding:2px 10px; font-size:.78rem; color:#c9a84c;
+    margin-bottom:16px;
+  }
+  .step {
+    background:rgba(255,255,255,.03); border:1px solid rgba(201,168,76,.15);
+    border-radius:6px; padding:14px 18px; margin:12px 0;
+    border-left:3px solid #c9a84c;
+  }
+  .step-num {
+    font-size:1.4rem; font-weight:bold; color:#c9a84c;
+    margin-bottom:6px; display:flex; align-items:center; gap:10px;
+  }
+  code {
+    background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.1);
+    border-radius:3px; padding:2px 8px; font-family:monospace;
+    color:#88ffcc; font-size:.88em;
+  }
+  .url-box {
+    background:rgba(0,0,0,.6); border:1px solid rgba(201,168,76,.3);
+    border-radius:4px; padding:10px 14px; margin:8px 0;
+    font-family:monospace; color:#c9a84c; font-size:.9rem;
+    word-break:break-all;
+  }
+  .warn {
+    background:rgba(255,180,0,.08); border:1px solid rgba(255,180,0,.3);
+    border-radius:4px; padding:10px 14px; margin:10px 0; color:#ffcc44;
+    font-size:.88rem;
+  }
+  .success {
+    background:rgba(64,200,64,.08); border:1px solid rgba(64,200,64,.3);
+    border-radius:4px; padding:10px 14px; margin:10px 0; color:#40c840;
+    font-size:.88rem;
+  }
+  .divider {
+    border:none; border-top:1px solid rgba(201,168,76,.15); margin:24px 0;
+  }
+  table { width:100%; border-collapse:collapse; margin:10px 0; font-size:.88rem; }
+  th { background:rgba(201,168,76,.1); color:#c9a84c; padding:8px 12px; text-align:left; }
+  td { padding:7px 12px; border-bottom:1px solid rgba(255,255,255,.05); }
+  a  { color:#88aaff; }
+  .screen {
+    background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.08);
+    border-radius:6px; padding:12px 16px; margin:8px 0;
+    font-size:.85rem; color:rgba(220,210,190,.7);
+  }
+  .screen b { color:#c9a84c; }
+  img { max-width:100%; border-radius:6px; margin:8px 0; }
+  footer { margin-top:40px; padding-top:20px; border-top:1px solid rgba(201,168,76,.1);
+    font-size:.78rem; color:rgba(180,160,120,.4); text-align:center; }
+</style>
+</head>
+<body>
+
+<h1>📱 Panduan Buat APK</h1>
+<h1 style="color:#e8dcc8;font-size:1.1rem;margin-top:4px">Pahlawan Terakhir — Guna PWABuilder</h1>
+<span class="badge">Masa: ~15 minit | PERCUMA | Tiada coding</span>
+
+<hr class="divider">
+
+<h2>🔁 Gambaran Keseluruhan</h2>
+<div class="screen">
+  <b>Netlify</b> (host game) → <b>PWABuilder</b> (buat APK) → <b>Install di Android</b>
+</div>
+
+<hr class="divider">
+
+<h2>BAHAGIAN A — Deploy ke Netlify</h2>
+
+<div class="step">
+  <div class="step-num">① Pergi ke Netlify</div>
+  <div class="url-box">https://app.netlify.com</div>
+  Log masuk atau daftar akaun percuma.
+</div>
+
+<div class="step">
+  <div class="step-num">② Upload fail game</div>
+  Klik <b>"Add new site"</b> → <b>"Deploy manually"</b><br><br>
+  Drag &amp; drop fail <code>ko-game-v7.zip</code> ke kotak yang disediakan.<br>
+  Tunggu 30-60 saat untuk deploy selesai.
+</div>
+
+<div class="step">
+  <div class="step-num">③ Dapat URL</div>
+  Selepas deploy, Netlify bagi URL seperti:<br>
+  <div class="url-box">https://amazing-game-abc123.netlify.app</div>
+  Anda boleh tukar nama dalam Settings → Site name:<br>
+  <div class="url-box">https://pahlawan-terakhir.netlify.app</div>
+</div>
+
+<div class="step">
+  <div class="step-num">④ Test dalam browser</div>
+  Buka URL dalam Chrome Android. Game mesti muat dengan betul.<br>
+  <div class="success">✅ Jika game berjalan = sedia untuk APK</div>
+</div>
+
+<hr class="divider">
+
+<h2>BAHAGIAN B — Buat APK dengan PWABuilder</h2>
+
+<div class="step">
+  <div class="step-num">① Pergi ke PWABuilder</div>
+  <div class="url-box">https://www.pwabuilder.com</div>
+</div>
+
+<div class="step">
+  <div class="step-num">② Masuk URL game</div>
+  Taip URL Netlify anda dalam kotak carian.<br>
+  Contoh: <code>https://pahlawan-terakhir.netlify.app</code><br><br>
+  Klik <b>"Start"</b> dan tunggu analisis selesai (~10 saat).
+</div>
+
+<div class="step">
+  <div class="step-num">③ Semak skor PWA</div>
+  PWABuilder akan tunjuk skor untuk 3 kategori:<br><br>
+  <table>
+    <tr><th>Kategori</th><th>Skor Anda (dijangka)</th><th>Minimum APK</th></tr>
+    <tr><td>Manifest</td><td>~100/100</td><td>70/100</td></tr>
+    <tr><td>Service Worker</td><td>~100/100</td><td>70/100</td></tr>
+    <tr><td>Security (HTTPS)</td><td>100/100</td><td>100/100</td></tr>
+  </table>
+  <div class="success">✅ Semua skor game ini sudah dioptimumkan</div>
+</div>
+
+<div class="step">
+  <div class="step-num">④ Generate Android Package</div>
+  Klik <b>"Package For Stores"</b> → Pilih <b>"Android"</b> → Klik <b>"Generate Package"</b><br><br>
+
+  Isi maklumat APK:
+  <table>
+    <tr><th>Field</th><th>Nilai</th></tr>
+    <tr><td>Package ID</td><td><code>com.mohdsah.pahlawanterakhir</code></td></tr>
+    <tr><td>App Name</td><td><code>Pahlawan Terakhir</code></td></tr>
+    <tr><td>Version Name</td><td><code>6.0</code></td></tr>
+    <tr><td>Version Code</td><td><code>6</code></td></tr>
+    <tr><td>Display Mode</td><td><code>fullscreen</code></td></tr>
+    <tr><td>Orientation</td><td><code>any</code></td></tr>
+    <tr><td>Signing</td><td>Mine (PWABuilder sign untuk anda)</td></tr>
+  </table>
+</div>
+
+<div class="step">
+  <div class="step-num">⑤ Download APK</div>
+  Klik <b>"Download Package"</b>.<br>
+  Anda akan dapat fail <code>pahlawan-terakhir.apk</code> (atau .zip).
+</div>
+
+<hr class="divider">
+
+<h2>BAHAGIAN C — Install APK di Android</h2>
+
+<div class="step">
+  <div class="step-num">① Aktifkan Unknown Sources</div>
+  Settings → Security → <b>Unknown Sources: ON</b><br>
+  (atau Settings → Apps → Special app access → Install unknown apps)<br><br>
+  <div class="warn">⚠️ Ini hanya perlu untuk install APK sendiri. Play Store APK tidak perlukan ini.</div>
+</div>
+
+<div class="step">
+  <div class="step-num">② Transfer APK ke telefon</div>
+  Hantar fail .apk ke telefon melalui:<br>
+  • WhatsApp / Telegram (hantar sebagai fail)<br>
+  • Google Drive<br>
+  • USB cable<br>
+  • Email attachment
+</div>
+
+<div class="step">
+  <div class="step-num">③ Install</div>
+  Tap fail .apk dalam telefon → <b>Install</b> → <b>Open</b><br><br>
+  <div class="success">✅ Game akan muncul sebagai app dalam launcher Android!</div>
+</div>
+
+<hr class="divider">
+
+<h2>BAHAGIAN D — Upload ke Google Play Store (Pilihan)</h2>
+
+<div class="step">
+  <div class="step-num">① Daftar Google Play Console</div>
+  <div class="url-box">https://play.google.com/console</div>
+  Bayaran pendaftaran sekali: <b>USD $25</b>
+</div>
+
+<div class="step">
+  <div class="step-num">② Generate .AAB (bukan .APK)</div>
+  Di PWABuilder, pilih <b>"Google Play"</b> (bukan Android).<br>
+  Ini akan generate <code>.aab</code> (Android App Bundle) yang diperlukan Play Store.
+</div>
+
+<div class="step">
+  <div class="step-num">③ Upload ke Play Console</div>
+  Create new app → Upload .aab → Isi maklumat:<br><br>
+  <table>
+    <tr><th>Field</th><th>Contoh</th></tr>
+    <tr><td>App name</td><td>Pahlawan Terakhir</td></tr>
+    <tr><td>Short description</td><td>Knight Online Classic Mobile RPG Malaysia</td></tr>
+    <tr><td>Category</td><td>Games &gt; Role Playing</td></tr>
+    <tr><td>Rating</td><td>Teen (13+)</td></tr>
+  </table>
+</div>
+
+<hr class="divider">
+
+<h2>❓ Masalah Lazim</h2>
+
+<table>
+  <tr><th>Masalah</th><th>Penyelesaian</th></tr>
+  <tr><td>Skor manifest rendah</td><td>Guna fail manifest.json yang sudah dioptimumkan dalam zip ini</td></tr>
+  <tr><td>APK tak boleh install</td><td>Aktifkan Unknown Sources dalam Settings</td></tr>
+  <tr><td>Game tidak muat dalam APK</td><td>Semak URL Netlify masih aktif</td></tr>
+  <tr><td>Layar putih/kosong</td><td>Tunggu 3-5 saat — service worker sedang cache</td></tr>
+  <tr><td>Icons tidak muncul</td><td>Pastikan icon-192.png dan icon-512.png ada</td></tr>
+</table>
+
+<hr class="divider">
+
+<h2>📞 Maklumat App</h2>
+<table>
+  <tr><td>Nama App</td><td>Pahlawan Terakhir</td></tr>
+  <tr><td>Package ID</td><td>com.mohdsah.pahlawanterakhir</td></tr>
+  <tr><td>Versi</td><td>6.0</td></tr>
+  <tr><td>Pembangun</td><td>mohdsah5@gmail.com</td></tr>
+  <tr><td>Platform</td><td>Android 8.0+ (API 26+)</td></tr>
+  <tr><td>Saiz APK (anggaran)</td><td>~5-8 MB</td></tr>
+</table>
+
+<footer>
+  Pahlawan Terakhir v6.0 — PWABuilder APK Guide<br>
+  Dibuat dengan ❤️ untuk Knight Online Malaysia
+</footer>
+
+</body>
+</html>

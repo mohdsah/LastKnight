@@ -1,0 +1,55 @@
+<div class="page active" id="page-editPlayer">
+  <div class="page-header"><div class="page-title">✏️ Edit Stat & Level</div><div class="page-sub">Edit level, gold, stat dan maklumat watak</div></div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">🔍 Cari Watak</div></div>
+    <div class="card-body">
+      <div class="search-row">
+        <input class="search-inp" id="editSearch" placeholder="Nama watak..." onkeydown="if(event.key==='Enter')searchEditPlayer()">
+        <button class="btn btn-gold btn-sm" onclick="searchEditPlayer()" style="flex:0 0 auto">Cari</button>
+      </div>
+      <div id="editSearchResults"></div>
+    </div>
+  </div>
+  <div class="card" id="editPlayerCard" style="display:none">
+    <div class="card-header">
+      <div class="card-title">⚔️ Edit: <span id="editCharName" style="color:var(--gold2)">—</span></div>
+    </div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Level</label><input type="number" class="gm-inp" id="editLevel" min="1" max="999"></div>
+        <div class="form-group"><label class="form-label">EXP</label><input type="number" class="gm-inp" id="editXP" min="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">💰 Gold</label><input type="number" class="gm-inp" id="editGold" min="0"></div>
+        <div class="form-group"><label class="form-label">✨ Skill Points</label><input type="number" class="gm-inp" id="editSkillPts" min="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">📊 Stat Points</label><input type="number" class="gm-inp" id="editStatPts" min="0"></div>
+      </div>
+      <div class="divider"></div>
+      <div style="font-family:Cinzel,serif;font-size:.65rem;color:var(--muted);letter-spacing:.12em;margin-bottom:10px">⚔️ BASE STATS</div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">STR</label><input type="number" class="gm-inp" id="editStr" min="1" max="9999"></div>
+        <div class="form-group"><label class="form-label">VIT (HP)</label><input type="number" class="gm-inp" id="editVit" min="1" max="9999"></div>
+        <div class="form-group"><label class="form-label">DEX</label><input type="number" class="gm-inp" id="editDex" min="1" max="9999"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">INT</label><input type="number" class="gm-inp" id="editInt" min="1" max="9999"></div>
+        <div class="form-group"><label class="form-label">WIS (MP)</label><input type="number" class="gm-inp" id="editWis" min="1" max="9999"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="preset-row">
+        <button class="btn btn-blue btn-xs" onclick="applyPreset('max_stat')">MAX Stat</button>
+        <button class="btn btn-blue btn-xs" onclick="applyPreset('max_gold')">MAX Gold</button>
+        <button class="btn btn-blue btn-xs" onclick="applyPreset('level50')">Lv 50</button>
+        <button class="btn btn-blue btn-xs" onclick="applyPreset('level100')">Lv 100</button>
+        <button class="btn btn-dim btn-xs"  onclick="applyPreset('reset_stat')">Reset Stat</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-gold btn-lg" onclick="saveEditPlayer()" style="flex:2">💾 Simpan</button>
+        <button class="btn btn-red btn-sm" onclick="closeEditPlayer()" style="flex:1">Batal</button>
+      </div>
+      <div class="status-msg" id="editStatus"></div>
+    </div>
+  </div>
+</div>

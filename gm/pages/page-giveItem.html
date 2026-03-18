@@ -1,0 +1,27 @@
+<div class="page active" id="page-giveItem">
+  <div class="page-header"><div class="page-title">🎁 Bagi Item</div><div class="page-sub">Hantar item terus ke inventori player</div></div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">👤 Pilih Player</div></div>
+    <div class="card-body">
+      <div class="search-row">
+        <input class="search-inp" id="givePlayerSearch" placeholder="Nama watak..." onkeydown="if(event.key==='Enter')searchGivePlayer()">
+        <button class="btn btn-gold btn-sm" onclick="searchGivePlayer()" style="flex:0 0 auto">Cari</button>
+      </div>
+      <div id="givePlayerResult" style="font-family:Share Tech Mono,monospace;font-size:.72rem;color:var(--green);min-height:18px"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">📦 Pilih Item</div></div>
+    <div class="card-body">
+      <div class="tab-row" id="itemCatTabs"></div>
+      <div class="item-grid" id="itemSelectorGrid"></div>
+      <div id="selectedItemInfo" style="margin-top:8px;padding:8px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;min-height:32px;font-family:Share Tech Mono,monospace;font-size:.68rem;color:var(--muted)">Pilih item di atas...</div>
+      <div class="form-row" style="margin-top:10px">
+        <div class="form-group"><label class="form-label">Kuantiti</label><input type="number" class="gm-inp" id="giveQty" value="1" min="1" max="99"></div>
+        <div class="form-group"><label class="form-label">Enhancement (+)</label><input type="number" class="gm-inp" id="giveEnh" value="0" min="0" max="9"></div>
+      </div>
+      <button class="btn btn-green btn-full" onclick="doGiveItem()" style="margin-top:4px">🎁 Bagi Item Sekarang</button>
+      <div class="status-msg" id="giveStatus" style="margin-top:8px"></div>
+    </div>
+  </div>
+</div>
