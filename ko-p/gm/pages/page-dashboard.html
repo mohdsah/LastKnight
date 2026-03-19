@@ -1,0 +1,42 @@
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div class="page-title">📊 Dashboard</div>
+    <div class="page-sub">Gambaran keseluruhan server Pahlawan Terakhir</div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="sc-icon">👥</div><div class="sc-val" id="statTotalPlayers">—</div><div class="sc-lbl">Total Players</div></div>
+    <div class="stat-card"><div class="sc-icon">🟢</div><div class="sc-val" id="statOnlineNow">—</div><div class="sc-lbl">Online</div></div>
+    <div class="stat-card"><div class="sc-icon">🌟</div><div class="sc-val" id="statElmorad">—</div><div class="sc-lbl">El Morad</div></div>
+    <div class="stat-card"><div class="sc-icon">🔥</div><div class="sc-val" id="statKarus">—</div><div class="sc-lbl">Karus</div></div>
+    <div class="stat-card"><div class="sc-icon">⭐</div><div class="sc-val" id="statMaxLv">—</div><div class="sc-lbl">Lv Tertinggi</div></div>
+    <div class="stat-card"><div class="sc-icon">🚫</div><div class="sc-val" id="statBanned">—</div><div class="sc-lbl">Banned</div></div>
+    <div class="stat-card"><div class="sc-icon">💎</div><div class="sc-val" id="statTopupPending">—</div><div class="sc-lbl">TopUp Pending</div></div>
+    <div class="stat-card"><div class="sc-icon">💰</div><div class="sc-val" id="statGold">—</div><div class="sc-lbl">Gold Beredar</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-header"><div class="card-title">🏆 Top Players</div><button class="btn btn-gold btn-xs" onclick="loadDashboard()">↺</button></div>
+      <div class="card-body" style="padding:0">
+        <table class="gm-table"><thead><tr><th>#</th><th>Nama</th><th>Lv</th><th>Faction</th><th>Aksi</th></tr></thead><tbody id="recentPlayers"></tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">⚡ Tindakan Pantas</div></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:7px">
+        <button class="btn btn-gold btn-full" onclick="showPage('players')">👥 Senarai Player</button>
+        <button class="btn btn-blue btn-full" onclick="showPage('editPlayer')">✏️ Edit Player</button>
+        <button class="btn btn-green btn-full" onclick="showPage('giveItem')">🎁 Bagi Item</button>
+        <button class="btn btn-purple btn-full" onclick="showPage('topupMgmt')">💎 Top-Up</button>
+        <button class="btn btn-dim btn-full" onclick="showPage('broadcast')">📢 Broadcast</button>
+        <div class="divider"></div>
+        <div style="font-family:Share Tech Mono,monospace;font-size:.62rem;color:var(--muted)">GM: <span id="dashGMName" style="color:var(--gold)">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">📋 Log Terkini</div><button class="btn btn-dim btn-xs" onclick="showPage('gmLog')">Semua →</button></div>
+    <div class="card-body" style="padding:0">
+      <table class="gm-table"><thead><tr><th>Aksi</th><th>GM</th><th>Target</th><th>Detail</th><th>Masa</th></tr></thead><tbody id="dashRecentLog"></tbody></table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="page active" id="page-players">
+  <div class="page-header"><div class="page-title">👥 Senarai Player</div><div class="page-sub">Semua akaun & watak dalam game</div></div>
+  <div class="card">
+    <div class="card-body" style="padding:10px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="search-inp" id="playerSearch" placeholder="Cari nama watak..." oninput="filterPlayers()" style="flex:1;min-width:160px">
+        <select class="gm-sel" id="playerFacFilter" onchange="filterPlayers()" style="flex:0 0 auto;width:130px">
+          <option value="">Semua Faction</option>
+          <option value="elmorad">🌟 El Morad</option>
+          <option value="karus">🔥 Karus</option>
+        </select>
+        <select class="gm-sel" id="playerJobFilter" onchange="filterPlayers()" style="flex:0 0 auto;width:120px">
+          <option value="">Semua Kelas</option>
+          <option value="warrior">⚔️ Warrior</option>
+          <option value="rogue">🗡️ Rogue</option>
+          <option value="magician">🔮 Mage</option>
+          <option value="priest">✨ Priest</option>
+        </select>
+        <button class="btn btn-gold btn-sm" onclick="loadPlayers()">↺ Refresh</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body" style="padding:0">
+      <table class="gm-table">
+        <thead><tr><th>Nama</th><th>Level</th><th>Gold</th><th>Faction</th><th>Kelas</th><th>Zone</th><th>Tindakan</th></tr></thead>
+        <tbody id="playerTbody"></tbody>
+      </table>
+    </div>
+    <div style="padding:10px;text-align:center;font-family:Cinzel,serif;font-size:.65rem;color:var(--muted)" id="playerCount"></div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="page active" id="page-statInvestor">
+  <div class="page-header"><div class="page-title">📈 Stat Investor</div><div class="page-sub">Bagi stat points, set stat, teleport player</div></div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">🔍 Cari Player</div></div>
+    <div class="card-body">
+      <div class="search-row">
+        <input class="search-inp" id="siSearch" placeholder="Nama watak..." onkeydown="if(event.key==='Enter')searchSIPlayer()">
+        <button class="btn btn-gold btn-sm" onclick="searchSIPlayer()" style="flex:0 0 auto">Cari</button>
+      </div>
+      <div id="siPlayerInfo" style="margin-top:8px"></div>
+    </div>
+  </div>
+  <div class="card" id="siCard" style="display:none">
+    <div class="card-header"><div class="card-title">📈 Invest: <span id="siPlayerName" style="color:var(--gold2)">—</span></div></div>
+    <div class="card-body">
+      <div style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold);margin-bottom:8px">💎 BAGI POINTS</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Stat Points</label><input type="number" class="gm-inp" id="siStatPts" value="10" min="1"></div>
+        <div class="form-group"><label class="form-label">💎 Diamond Points</label><input type="number" class="gm-inp" id="siDiamondPts" value="0" min="0"></div>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="addStatPoints()">➕ Bagi Points</button>
+      <div class="divider"></div>
+      <div style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold);margin-bottom:8px">⚔️ SET STAT TERUS</div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">STR</label><input type="number" class="gm-inp" id="siStr" min="1" max="9999"></div>
+        <div class="form-group"><label class="form-label">VIT</label><input type="number" class="gm-inp" id="siVit" min="1" max="9999"></div>
+        <div class="form-group"><label class="form-label">DEX</label><input type="number" class="gm-inp" id="siDex" min="1" max="9999"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">INT</label><input type="number" class="gm-inp" id="siInt" min="1" max="9999"></div>
+        <div class="form-group"><label class="form-label">WIS</label><input type="number" class="gm-inp" id="siWis" min="1" max="9999"></div>
+      </div>
+      <div class="preset-row">
+        <button class="btn btn-blue btn-xs" onclick="siPreset('balanced')">Seimbang</button>
+        <button class="btn btn-blue btn-xs" onclick="siPreset('warrior')">Warrior</button>
+        <button class="btn btn-blue btn-xs" onclick="siPreset('mage')">Mage</button>
+        <button class="btn btn-blue btn-xs" onclick="siPreset('rogue')">Rogue</button>
+        <button class="btn btn-gold btn-xs" onclick="siPreset('max')">MAX ALL</button>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="saveStatInvestor()" style="margin-top:8px">💾 Simpan Stat</button>
+      <div class="divider"></div>
+      <div style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold);margin-bottom:8px">🌀 TELEPORT + GOLD</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Zone</label>
+          <select class="gm-sel" id="siZone">
+            <option value="moradon">🏙️ Moradon</option>
+            <option value="elmorad">🌟 El Morad</option>
+            <option value="karus">🔥 Karus</option>
+            <option value="ronark">⚔️ Ronark Land</option>
+            <option value="cz">🏰 Colony Zone</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Tambah Gold</label><input type="number" class="gm-inp" id="siGold" value="0" min="0"></div>
+      </div>
+      <button class="btn btn-blue btn-full" onclick="teleportAndGold()">🌀 Teleport + Bagi Gold</button>
+      <div class="status-msg" id="siStatus" style="margin-top:8px"></div>
+    </div>
+  </div>
+</div>

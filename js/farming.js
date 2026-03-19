@@ -79,8 +79,8 @@ function showDropNotif(itemId, rarity) {
   const item = window.ITEM_DB[itemId]; if (!item) return;
   const col = window.RARITY_COLOR[rarity] || '#aaa';
   // Guard: pastikan G.pl wujud sebelum cipta floating text
-  if (G && G.pl && G.fts) {
-    if(G?.pl) G.fts.push(new FT(G.pl.x, G.pl.y - 45, '+ ' + item.name, col, 13));
+  if (G && window.G.pl && window.G.fts) {
+    if(G?.pl) window.G.fts.push(new FT(window.G.pl.x, window.G.pl.y - 45, '+ ' + item.name, col, 13));
   }
   // Audio SFX
   if (typeof Audio!=='undefined') {
@@ -145,7 +145,7 @@ function gainExp(amount) {
       window.selChar.skill_pts = (window.selChar.skill_pts || 0) + window.SKILL_PT_PER_5LV;
     }
 
-    if (G.pl) G.pl.applyChar(window.selChar);
+    if (window.G.pl) window.G.pl.applyChar(window.selChar);
     showLvNotif();
     if (typeof Audio!=='undefined') Audio.playSFX('levelup');
     addChat('', '🎉 Level Up! Now Lv.' + window.selChar.level + ' (+' + window.STAT_PER_LEVEL + ' stat points)', 'system');
@@ -195,7 +195,7 @@ function allocStat(key) {
   if (!window.selChar || (window.selChar.stat_pts || 0) <= 0) return;
   window.selChar.stat_pts--;
   window.selChar[key] = (window.selChar[key] || 0) + 1;
-  if (G.pl) G.pl.applyChar(window.selChar);
+  if (window.G.pl) window.G.pl.applyChar(window.selChar);
   renderStatAlloc();
   window.saveProgress?.();
 }
@@ -217,7 +217,7 @@ function tickBossSpawns(dt) {
       spawn.timer  = spawn.spawnEvery;
       spawn.active = true;
       // Spawn boss
-      G.enemies.push(new Enemy(spawn.x, spawn.y, spawn.type));
+      window.G.enemies.push(new Enemy(spawn.x, spawn.y, spawn.type));
       showWvNotif('💀 ' + spawn.label + ' muncul!');
       addChat('', '⚠️ ' + spawn.label + ' has spawned!', 'system');
       if (typeof Audio!=='undefined') Audio.playSFX('bossSpawn');
@@ -226,7 +226,7 @@ function tickBossSpawns(dt) {
   // Mark inactive bila boss mati
   for (const spawn of bossSpawnList) {
     if (!spawn.active) continue;
-    const stillAlive = G.enemies.some(e => !e.dead && e.type === spawn.type &&
+    const stillAlive = window.G.enemies.some(e => !e.dead && e.type === spawn.type &&
       Math.hypot(e.x - spawn.x, e.y - spawn.y) < 400);
     if (!stillAlive) spawn.active = false;
   }
@@ -261,7 +261,7 @@ function tickFarmZones(dt) {
   for (const fz of farmSpawnList) {
     // Kira berapa musuh dari farm zone ini masih hidup
     const alive = fz.spawnedIds.filter(id =>
-      G.enemies.some(e => e._farmId === id && !e.dead)
+      window.G.enemies.some(e => e._farmId === id && !e.dead)
     ).length;
 
     if (alive < fz.count) {
@@ -275,13 +275,13 @@ function tickFarmZones(dt) {
         const y = Math.max(60, Math.min(WH - 60, fz.y + Math.sin(angle) * dist));
         const e = new Enemy(x, y, fz.type);
         e._farmId = Date.now() + Math.random();
-        G.enemies.push(e);
+        window.G.enemies.push(e);
         fz.spawnedIds.push(e._farmId);
       }
     }
     // Bersihkan ID yang dah mati
     fz.spawnedIds = fz.spawnedIds.filter(id =>
-      G.enemies.some(e => e._farmId === id && !e.dead)
+      window.G.enemies.some(e => e._farmId === id && !e.dead)
     );
   }
 }
@@ -325,7 +325,7 @@ function tickCZ(dt) {
   czTimer -= dt;
   if (czTimer <= 0) { endCZ(); return; }
 
-  const player = G.pl; if (!player) return;
+  const player = window.G.pl; if (!player) return;
   const myFac  = window.selChar?.faction || 'elmorad';
 
   // ── Castle capture ────────────────────────────────
@@ -501,7 +501,7 @@ function drawCZMinimap() {
 // renderCZPanel() dipanggil dari sana.
 function renderCZPanel() {
   const myFac = window.selChar?.faction || 'elmorad';
-  const isInCZ = G.currentZone === 'cz';
+  const isInCZ = window.G.currentZone === 'cz';
   let html = `
     <div class="nw-panel">
       <div class="nw-panel-title">🏰 Colony Zone War</div>
@@ -551,8 +551,8 @@ function startCZWar() {
 // HOOK ke game loop (dipanggil dari game.js)
 // ══════════════════════════════════════════════════════
 function farmingTick(dt) {
-  if (!G.pl) return;
-  tickGroundItems(dt, G.pl);
+  if (!window.G.pl) return;
+  tickGroundItems(dt, window.G.pl);
   tickBossSpawns(dt);
   tickFarmZones(dt);
   if (czActive) tickCZ(dt);
@@ -561,7 +561,7 @@ function farmingTick(dt) {
 
 function farmingDraw() {
   drawGroundItems();
-  if (czActive && G.currentZone === 'cz') drawCZMap();
+  if (czActive && window.G.currentZone === 'cz') drawCZMap();
   drawFarmZoneMarkers();
 }
 

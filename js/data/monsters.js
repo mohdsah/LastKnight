@@ -1,10 +1,10 @@
 'use strict';
 /* ══════════════════════════════════════════════════════
    Pahlawan Terakhir — Monster Data
-   DROP_TABLE, DROP_TABLE_EXT, ENEMY_EXTRA, BOSS_SPAWNS
+   window.DROP_TABLE, DROP_TABLE_EXT, ENEMY_EXTRA, window.BOSS_SPAWNS
    ══════════════════════════════════════════════════════ */
 
-const DROP_TABLE={goblin:[{id:'luna_stone',rate:.25},{id:'hpot_sm',rate:.3},{id:'wraith_stone',rate:.15},{id:'monsters_bead',rate:.4}],orc:[{id:'luna_stone',rate:.3},{id:'hpot_md',rate:.2},{id:'monsters_bead',rate:.45},{id:'chaos_stone',rate:.05}],archer:[{id:'wraith_stone',rate:.2},{id:'hpot_sm',rate:.35},{id:'mpot_sm',rate:.2},{id:'luna_stone',rate:.2}],dark_mage:[{id:'mpot_md',rate:.25},{id:'chaos_stone',rate:.08},{id:'monsters_bead',rate:.35},{id:'star_stone',rate:.02}],boss:[{id:'chaos_stone',rate:.35},{id:'star_stone',rate:.08},{id:'hpot_lg',rate:.4},{id:'ring_iron',rate:.05},{id:'amulet_jade',rate:.03},{id:'crystal_pure',rate:.04},{id:'elixir_power',rate:.02},{id:'robe_inferno',rate:.003},{id:'robe_holy',rate:.003},{id:'ring_fire',rate:.01}],goblin_king:[{id:'chaos_stone',rate:.4},{id:'hpot_lg',rate:.5},{id:'ring_gold',rate:.06},{id:'dagger_dark',rate:.02},{id:'bow_shadow',rate:.008},{id:'staff_holy',rate:.005}],orc_warlord:[{id:'star_stone',rate:.12},{id:'armor_chain',rate:.04},{id:'sword_steel',rate:.03},{id:'ring_ruby',rate:.01},{id:'hpot_lg',rate:.5},{id:'crystal_pure',rate:.06},{id:'armor_dark_knight',rate:.005},{id:'helm_dark_knight',rate:.004},{id:'glove_dark',rate:.008},{id:'boot_dark',rate:.008}],demon_king:[{id:'sword_legend',rate:.01},{id:'ring_ruby',rate:.03},{id:'amulet_power',rate:.02},{id:'star_stone',rate:.2},{id:'chaos_stone',rate:.5},{id:'dragon_scale',rate:.15},{id:'demon_core',rate:.08},{id:'ring_mythic',rate:.005},{id:'amulet_dragon',rate:.003},{id:'earring_mythic',rate:.003},{id:'staff_mythic',rate:.002},{id:'dagger_mythic',rate:.002},{id:'sword_mythic',rate:.002}]};
+const window.DROP_TABLE={goblin:[{id:'luna_stone',rate:.25},{id:'hpot_sm',rate:.3},{id:'wraith_stone',rate:.15},{id:'monsters_bead',rate:.4}],orc:[{id:'luna_stone',rate:.3},{id:'hpot_md',rate:.2},{id:'monsters_bead',rate:.45},{id:'chaos_stone',rate:.05}],archer:[{id:'wraith_stone',rate:.2},{id:'hpot_sm',rate:.35},{id:'mpot_sm',rate:.2},{id:'luna_stone',rate:.2}],dark_mage:[{id:'mpot_md',rate:.25},{id:'chaos_stone',rate:.08},{id:'monsters_bead',rate:.35},{id:'star_stone',rate:.02}],boss:[{id:'chaos_stone',rate:.35},{id:'star_stone',rate:.08},{id:'hpot_lg',rate:.4},{id:'ring_iron',rate:.05},{id:'amulet_jade',rate:.03},{id:'crystal_pure',rate:.04},{id:'elixir_power',rate:.02},{id:'robe_inferno',rate:.003},{id:'robe_holy',rate:.003},{id:'ring_fire',rate:.01}],goblin_king:[{id:'chaos_stone',rate:.4},{id:'hpot_lg',rate:.5},{id:'ring_gold',rate:.06},{id:'dagger_dark',rate:.02},{id:'bow_shadow',rate:.008},{id:'staff_holy',rate:.005}],orc_warlord:[{id:'star_stone',rate:.12},{id:'armor_chain',rate:.04},{id:'sword_steel',rate:.03},{id:'ring_ruby',rate:.01},{id:'hpot_lg',rate:.5},{id:'crystal_pure',rate:.06},{id:'armor_dark_knight',rate:.005},{id:'helm_dark_knight',rate:.004},{id:'glove_dark',rate:.008},{id:'boot_dark',rate:.008}],demon_king:[{id:'sword_legend',rate:.01},{id:'ring_ruby',rate:.03},{id:'amulet_power',rate:.02},{id:'star_stone',rate:.2},{id:'chaos_stone',rate:.5},{id:'dragon_scale',rate:.15},{id:'demon_core',rate:.08},{id:'ring_mythic',rate:.005},{id:'amulet_dragon',rate:.003},{id:'earring_mythic',rate:.003},{id:'staff_mythic',rate:.002},{id:'dagger_mythic',rate:.002},{id:'sword_mythic',rate:.002}]};
 
 const DROP_TABLE_EXT = {
   // Format: [{ id, rate, minLv }]
@@ -102,12 +102,12 @@ const ENEMY_EXTRA = {
 };
 
 // ── NPC TAMBAH: CZ Gate & Colony ─────────────────────
-NPCS['cz_gate']    = { name:'Pintu CZ',       icon:'🚪', x:1100, y:1200, shop:null, dialog:'Selamat datang ke Colony Zone! Rebut semua Koloni untuk menang!', gate:'cz' };
-NPCS['col_npc']    = { name:'Penguasa Koloni',icon:'🏴', x:1500, y:800,  shop:null, dialog:'Koloni ini milik siapa? Serang untuk rebutnya!' };
-ZONES['moradon'].npc.push('cz_gate');
+window.NPCS['cz_gate']    = { name:'Pintu CZ',       icon:'🚪', x:1100, y:1200, shop:null, dialog:'Selamat datang ke Colony Zone! Rebut semua Koloni untuk menang!', gate:'cz' };
+window.NPCS['col_npc']    = { name:'Penguasa Koloni',icon:'🏴', x:1500, y:800,  shop:null, dialog:'Koloni ini milik siapa? Serang untuk rebutnya!' };
+window.ZONES['moradon'].npc.push('cz_gate');
 
 // ── SHOP TAMBAH: CZ Reward Shop ───────────────────────
-SHOPS['cz_reward'] = {
+window.SHOPS['cz_reward'] = {
   name:'Kedai Ganjaran CZ',
   tabs:{
     'Rare Items':['sword_knight','armor_plate','dagger_shadow','staff_divine','ring_ruby'],
@@ -117,45 +117,45 @@ SHOPS['cz_reward'] = {
 };
 
 // ── INN NPC tambahan ────────────────────────────────
-NPCS['innkeeper_el'] = {
+window.NPCS['innkeeper_el'] = {
   name:'Inn El Morad', icon:'🏨', x:400, y:380, type:'inn', heal:true,
   dialog:'Selamat datang ke Inn El Morad! Pulihkan tenaga untuk perang!'
 };
-NPCS['innkeeper_kr'] = {
+window.NPCS['innkeeper_kr'] = {
   name:'Inn Karus', icon:'🏚️', x:2000, y:1980, type:'inn', heal:true,
   dialog:'Orc tidak perlu rehat lama. Tapi kami sedia untuk kamu, pejuang!'
 };
 
 // Tambah ke zone
-if (!ZONES.elmorad.npc.includes('innkeeper_el')) ZONES.elmorad.npc.push('innkeeper_el');
-if (!ZONES.karus.npc.includes('innkeeper_kr'))   ZONES.karus.npc.push('innkeeper_kr');
+if (!window.ZONES.elmorad.npc.includes('innkeeper_el')) window.ZONES.elmorad.npc.push('innkeeper_el');
+if (!window.ZONES.karus.npc.includes('innkeeper_kr'))   window.ZONES.karus.npc.push('innkeeper_kr');
 
 // ── EXPOSE SEMUA KE WINDOW ────────────────────────────
-window.RACES      = RACES;
-window.JOBS       = JOBS;
+window.RACES      = window.RACES;
+window.JOBS       = window.JOBS;
 window.FACE_ICONS = FACE_ICONS;
-window.ZONES      = ZONES;
-window.NPCS       = NPCS;
-window.ITEM_DB    = ITEM_DB;
-window.ENH_RATES  = ENH_RATES;
+window.ZONES      = window.ZONES;
+window.NPCS       = window.NPCS;
+window.ITEM_DB    = window.ITEM_DB;
+window.ENH_RATES  = window.ENH_RATES;
 
-if (typeof REV_RATES!=="undefined") window.REV_RATES = REV_RATES;
-if (typeof SKILL_TREES!=="undefined") window.SKILL_TREES = SKILL_TREES;
-if (typeof DROP_TABLE!=="undefined") window.DROP_TABLE = DROP_TABLE;
-if (typeof SHOPS!=="undefined") window.SHOPS = SHOPS;
+if (typeof window.REV_RATES!=="undefined") window.REV_RATES = window.REV_RATES;
+if (typeof window.SKILL_TREES!=="undefined") window.SKILL_TREES = window.SKILL_TREES;
+if (typeof window.DROP_TABLE!=="undefined") window.DROP_TABLE = window.DROP_TABLE;
+if (typeof window.SHOPS!=="undefined") window.SHOPS = window.SHOPS;
 if (typeof NW_CONFIG!=="undefined") window.NW_CONFIG = NW_CONFIG;
 if (typeof PARTY_CONFIG!=="undefined") window.PARTY_CONFIG = PARTY_CONFIG;
 if (typeof PK_CONFIG!=="undefined") window.PK_CONFIG = PK_CONFIG;
 if (typeof RARITY_COLOR!=="undefined") window.RARITY_COLOR = RARITY_COLOR;
-if (typeof STAT_PER_LEVEL!=="undefined") window.STAT_PER_LEVEL = STAT_PER_LEVEL;
-if (typeof SKILL_PT_PER_5LV!=="undefined") window.SKILL_PT_PER_5LV = SKILL_PT_PER_5LV;
-if (typeof CZ_ZONE!=="undefined") window.CZ_ZONE = CZ_ZONE;
-if (typeof FARM_ZONES!=="undefined") window.FARM_ZONES = FARM_ZONES;
+if (typeof window.STAT_PER_LEVEL!=="undefined") window.STAT_PER_LEVEL = window.STAT_PER_LEVEL;
+if (typeof window.SKILL_PT_PER_5LV!=="undefined") window.SKILL_PT_PER_5LV = window.SKILL_PT_PER_5LV;
+if (typeof window.CZ_ZONE!=="undefined") window.CZ_ZONE = window.CZ_ZONE;
+if (typeof window.FARM_ZONES!=="undefined") window.FARM_ZONES = window.FARM_ZONES;
 if (typeof DROP_TABLE_EXT!=="undefined") window.DROP_TABLE_EXT = DROP_TABLE_EXT;
 if (typeof ENEMY_EXTRA!=="undefined") window.ENEMY_EXTRA = ENEMY_EXTRA;
 if (typeof expRequired==="function") window.expRequired = expRequired;
 
-const BOSS_SPAWNS = {
+const window.BOSS_SPAWNS = {
   ronark: [
     { type:'boss',       x:1200, y:800,  spawnEvery:120, timer:120, active:false, label:'⚡ Iblis Agung' },
     { type:'orc_warlord',x:600,  y:1400, spawnEvery:180, timer:180, active:false, label:'⚔ Panglima Orc' },
@@ -175,11 +175,11 @@ const BOSS_SPAWNS = {
   ],
 };
 
-// ── MONSTER FARM ZONES (spawn berkelompok) ────────────
+// ── MONSTER FARM window.ZONES (spawn berkelompok) ────────────
 
 
 // ── Exports ───────────────────────────────────────────
-window.DROP_TABLE     = DROP_TABLE;
+window.DROP_TABLE     = window.DROP_TABLE;
 window.DROP_TABLE_EXT = DROP_TABLE_EXT;
 window.ENEMY_EXTRA    = ENEMY_EXTRA;
-window.BOSS_SPAWNS    = BOSS_SPAWNS;
+window.BOSS_SPAWNS    = window.BOSS_SPAWNS;

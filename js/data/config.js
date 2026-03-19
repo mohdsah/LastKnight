@@ -2,7 +2,7 @@
 /* ══════════════════════════════════════════════════════
    Pahlawan Terakhir — Game Config Data
    NW_CONFIG, PARTY_CONFIG, PK_CONFIG,
-   STAT_PER_LEVEL, SKILL_PT_PER_5LV, expRequired
+   window.STAT_PER_LEVEL, window.SKILL_PT_PER_5LV, expRequired
    ══════════════════════════════════════════════════════ */
 
 const NW_CONFIG={duration:600,killPts:1,fortifyPts:5,rewardGold:{winner:2000,loser:500},rewardXP:{winner:5000,loser:1000},castleHP:1000};
@@ -17,9 +17,9 @@ const PK_CONFIG={nationsWarZone:'ronark',pkDrop:0.15,allyColor:'#44ff44',enemyCo
 
 // ── RARITY COLORS ────────────────────────────────────
 
-const STAT_PER_LEVEL = 3;
+const window.STAT_PER_LEVEL = 3;
 // Skill point dapat setiap 5 level
-const SKILL_PT_PER_5LV = 1;
+const window.SKILL_PT_PER_5LV = 1;
 
 // ── ZONE CZ (Colony Zone) ────────────────────────────
 
@@ -34,6 +34,6 @@ function expRequired(lv) {
 window.NW_CONFIG        = NW_CONFIG;
 window.PARTY_CONFIG     = PARTY_CONFIG;
 window.PK_CONFIG        = PK_CONFIG;
-window.STAT_PER_LEVEL   = STAT_PER_LEVEL;
-window.SKILL_PT_PER_5LV = SKILL_PT_PER_5LV;
+window.STAT_PER_LEVEL   = window.STAT_PER_LEVEL;
+window.SKILL_PT_PER_5LV = window.SKILL_PT_PER_5LV;
 window.expRequired      = expRequired;

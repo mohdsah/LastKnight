@@ -95,20 +95,34 @@ async function doLogin() {
       const res = await SB.auth.signInWithPassword({ email, password: pwd });
       authData = res.data; authErr = res.error;
     } catch(fetchErr) {
-      // Network error (Failed to fetch, no internet, etc)
-      setLgSt('Tiada sambungan internet. Cuba Offline Mode.','err');
+      // Network error — tunjuk butiran untuk debug
+      const fe = fetchErr?.message || String(fetchErr);
+      console.error('[PT] Network error during login:', fe);
+      if (fe.includes('CORS') || fe.includes('cross-origin')) {
+        setLgSt('CORS error — deploy ke Netlify dulu, jangan buka file:// terus.','err');
+      } else {
+        setLgSt('Tiada internet / server tidak boleh dicapai. Cuba Offline Mode.','err');
+      }
       return;
     }
 
     if (authErr) {
-      if (authErr.message.includes('Invalid login credentials') || authErr.message.includes('invalid_credentials')) {
+      const msg = authErr.message || '';
+      if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials')) {
         setLgSt('Username atau password salah!','err');
-      } else if (authErr.message.includes('Email not confirmed')) {
-        setLgSt('Email belum disahkan.','err');
-      } else if (authErr.message.includes('fetch') || authErr.message.includes('network')) {
-        setLgSt('Gagal sambung server. Cuba Offline Mode.','err');
+      } else if (msg.includes('Email not confirmed')) {
+        // Auto-handle: cuba login tetap jalan
+        setLgSt('⚠️ Email belum disahkan. Cuba Offline Mode.','err');
+      } else if (msg.includes('fetch') || msg.includes('network') || msg.includes('NetworkError')) {
+        setLgSt('Tiada internet. Cuba Offline Mode.','err');
+      } else if (msg.includes('rate') || msg.includes('limit')) {
+        setLgSt('Terlalu banyak percubaan. Tunggu sebentar.','err');
+      } else if (msg.includes('disabled') || msg.includes('Signups not allowed')) {
+        setLgSt('Pendaftaran ditutup sementara.','err');
       } else {
-        setLgSt('Login gagal: ' + authErr.message,'err');
+        // Tunjuk mesej sebenar untuk debug
+        setLgSt('Login gagal: ' + msg,'err');
+        console.error('[PT] Login error:', authErr);
       }
       return;
     }
@@ -224,8 +238,16 @@ async function doLogout() {
 async function tryRestoreSession() {
   if (!SB || offlineMode) return false;
   try {
-    const { data } = await SB.auth.getSession();
-    if (!data?.session?.user) return false;
+    let sessionData;
+    try {
+      const { data } = await SB.auth.getSession();
+      sessionData = data;
+    } catch(netErr) {
+      console.warn('[PT] Session restore network fail:', netErr?.message);
+      return false;
+    }
+    if (!sessionData?.session?.user) return false;
+    const data = sessionData;
 
     const user = data.session.user;
     const username = user.user_metadata?.username

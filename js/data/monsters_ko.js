@@ -452,7 +452,7 @@ if (window.ITEM_DB) {
       price:3000, sell:750, stack:5, desc:'Elixir kekuatan untuk craft weapon +9.',
     },
   });
-  console.log('[PT] ITEM_DB extended with KO original items');
+  console.log('[PT] window.ITEM_DB extended with KO original items');
 }
 
 // ── ZONE MONSTER LIST UPDATE ─────────────────────────────
@@ -489,6 +489,6 @@ window.addEventListener('load', function() {
         window.DROP_TABLE[key] = mob.drop;
       }
     });
-    console.log('[PT] DROP_TABLE merged with KO data');
+    console.log('[PT] window.DROP_TABLE merged with KO data');
   }
 });

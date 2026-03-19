@@ -6,9 +6,9 @@
    Diload PERTAMA — definisi semua global onclick
    ═══════════════════════════════════════════════════ */
 
-window.PT_VERSION   = '6.1';
+window.PT_VERSION   = '6.2';
 window.PT_BUILDDATE = '2026-03-16';
-console.log(`%c⚔ Pahlawan Terakhir v${window.PT_VERSION||'6.1'}`, 'color:#c9a84c;font-size:14px;font-weight:bold');
+console.log(`%c⚔ Pahlawan Terakhir v${window.PT_VERSION||'6.2'}`, 'color:#c9a84c;font-size:14px;font-weight:bold');
 
 // ── Safe queue system ─────────────────────────────────
 window._ready = false;
@@ -59,7 +59,7 @@ function _doGotoAndPlay(zoneId) {
 
   // Validate zone wujud — fallback ke moradon jika tidak
   if (!window.ZONES[zoneId]) {
-    console.warn(`[PT] Zone '${zoneId}' tidak wujud dalam ZONES, fallback ke moradon`);
+    console.warn(`[PT] Zone '${zoneId}' tidak wujud dalam window.ZONES, fallback ke moradon`);
     if (typeof addChat === 'function') addChat('', `⚠️ Zone '${zoneId}' belum tersedia.`, 'system');
     zoneId = 'moradon';
   }

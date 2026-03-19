@@ -117,15 +117,15 @@ function initLoginCreature(){
 
 // ── MENU ──────────────────────────────────────────────────────────
 async function goMenu(){
-  hideAll(); sc('menuSc','on'); if(!selChar) return;
-  const race = RACES[selChar.race]||RACES.human;
-  const job  = JOBS[selChar.job]||JOBS.warrior;
-  const isEl = selChar.faction==='elmorad'||selChar.faction==='cahaya';
+  hideAll(); sc('menuSc','on'); if(!window.selChar) return;
+  const race = window.RACES[window.selChar.race]||window.RACES.human;
+  const job  = window.JOBS[window.selChar.job]||window.JOBS.warrior;
+  const isEl = window.selChar.faction==='elmorad'||window.selChar.faction==='cahaya';
 
   // Avatar — portrait SVG atau fallback emoji
   const av = E('mAvatar');
   if (av) {
-    const portraitSrc = window.PortraitSystem?.getCharPortrait(selChar);
+    const portraitSrc = window.PortraitSystem?.getCharPortrait(window.selChar);
     if (portraitSrc) {
       av.innerHTML = `<img src="${portraitSrc}"
         style="width:100%;height:100%;object-fit:cover;border-radius:inherit"
@@ -136,14 +136,14 @@ async function goMenu(){
     }
   }
 
-  E('mPname').textContent = selChar.char_name;
+  E('mPname').textContent = window.selChar.char_name;
   E('mFTag').textContent  = isEl ? '🌟 El Morad' : '🔥 Karus';
   E('mFTag').style.color  = isEl ? 'var(--el)' : 'var(--kr)';
-  E('mLv').textContent    = selChar.level||1;
-  E('mGold').textContent  = (selChar.gold||0).toLocaleString();
+  E('mLv').textContent    = window.selChar.level||1;
+  E('mGold').textContent  = (window.selChar.gold||0).toLocaleString();
 
-  const pts = E('mPts'); if(pts) pts.textContent = (selChar.points||0).toLocaleString();
-  const mb  = E('menuPointBadge'); if(mb) mb.textContent = (selChar.points||0)+' pt';
+  const pts = E('mPts'); if(pts) pts.textContent = (window.selChar.points||0).toLocaleString();
+  const mb  = E('menuPointBadge'); if(mb) mb.textContent = (window.selChar.points||0)+' pt';
 
   await loadLB();
 
@@ -166,19 +166,19 @@ async function loadLB(){
 
 // ── HUD ───────────────────────────────────────────────────────────
 function updHUD(){
-  const p=G.pl;if(!p)return;
+  const p=window.G.pl;if(!p)return;
   const hpB=E('hpB');if(hpB)hpB.style.width=(p.hp/p.maxHp*100)+'%';
   const hpV=E('hpV');if(hpV)hpV.textContent=Math.ceil(p.hp)+'/'+Math.ceil(p.maxHp);
   const mpB=E('mpB');if(mpB)mpB.style.width=(p.mp/p.maxMp*100)+'%';
   const mpV=E('mpV');if(mpV)mpV.textContent=Math.ceil(p.mp)+'/'+Math.ceil(p.maxMp);
-  const lv=selChar?.level||1,xp=selChar?.xp||0;
+  const lv=window.selChar?.level||1,xp=window.selChar?.xp||0;
   const need=typeof window.expRequired==='function'?window.expRequired(lv):lv*100;
   const xpB=E('xpB');if(xpB)xpB.style.width=(xp/need*100)+'%';
   const xpV=E('xpV');if(xpV)xpV.textContent=xp+'/'+need;
   const lvB=E('lvB');if(lvB)lvB.textContent='LV '+lv;
-  const wN=E('wN');if(wN)wN.textContent=G.wave;
-  const scN=E('scN');if(scN)scN.textContent=G.score.toLocaleString();
-  const klN=E('klN');if(klN)klN.textContent='Kills: '+G.kills;
+  const wN=E('wN');if(wN)wN.textContent=window.G.wave;
+  const scN=E('scN');if(scN)scN.textContent=window.G.score.toLocaleString();
+  const klN=E('klN');if(klN)klN.textContent='Kills: '+window.G.kills;
   // Skill CD
   ['spBtn','sp2Btn','sp3Btn','sp4Btn'].forEach((id,i)=>{
     const btn=E(id);if(!btn)return;
@@ -193,14 +193,14 @@ function updHUD(){
 
 // ── MINIMAP ───────────────────────────────────────────────────────
 function updMinimap(){
-  const mc=E('mmCanvas');if(!mc||!G.pl)return;
+  const mc=E('mmCanvas');if(!mc||!window.G.pl)return;
   const mw=mc.width,mh=mc.height;const lx=mc.getContext('2d');
-  const isEl=selChar?.faction==='elmorad'||selChar?.faction==='cahaya';
+  const isEl=window.selChar?.faction==='elmorad'||window.selChar?.faction==='cahaya';
   lx.fillStyle=isEl?'#0a0c18':'#120808';lx.fillRect(0,0,mw,mh);
   // NPC dots (green)
-  if(G.zoneNPCs){G.zoneNPCs.forEach(n=>{lx.fillStyle='#40c840';lx.beginPath();lx.arc(n.x/WW*mw,n.y/WH*mh,2,0,Math.PI*2);lx.fill()})}
+  if(window.G.zoneNPCs){window.G.zoneNPCs.forEach(n=>{lx.fillStyle='#40c840';lx.beginPath();lx.arc(n.x/WW*mw,n.y/WH*mh,2,0,Math.PI*2);lx.fill()})}
   // Enemies (red)
-  for(const e of G.enemies||[]){if(e.dead)continue;lx.fillStyle='#e84040';lx.beginPath();lx.arc(e.x/WW*mw,e.y/WH*mh,1.5,0,Math.PI*2);lx.fill()}
+  for(const e of window.G.enemies||[]){if(e.dead)continue;lx.fillStyle='#e84040';lx.beginPath();lx.arc(e.x/WW*mw,e.y/WH*mh,1.5,0,Math.PI*2);lx.fill()}
   // Other players
   for(const op of Object.values(opMap||{})){
     lx.fillStyle=op.faction==='elmorad'||op.faction==='cahaya'?'#4488ff':'#ff4444';
@@ -208,14 +208,14 @@ function updMinimap(){
   }
   // Player (gold)
   if (!G?.pl) return;
-  const mx=G.pl.x/WW*mw,my=G.pl.y/WH*mh;
+  const mx=window.G.pl.x/WW*mw,my=window.G.pl.y/WH*mh;
   lx.fillStyle=isEl?'#ffdd44':'#ff8844';lx.beginPath();lx.arc(mx,my,3,0,Math.PI*2);lx.fill();
   lx.strokeStyle=isEl?'#ffdd44':'#ff8844';lx.lineWidth=1;lx.stroke();
 }
 
 // ── ZONE BANNER ───────────────────────────────────────────────────
 function showZoneBanner(zoneId){
-  const zone=ZONES[zoneId];if(!zone)return;
+  const zone=window.ZONES[zoneId];if(!zone)return;
   sc('zoneBanner','on');
   E('zoneNameTag').textContent=zone.icon+' '+zone.name;
   const pvpEl=E('zonePvpTag');
@@ -243,15 +243,15 @@ function renderChat(){
 function sendChat(){
   const inp=E('chatInput');if(!inp||!inp.value.trim())return;
   const msg=inp.value.trim().substring(0,100);inp.value='';
-  const name=selChar?.char_name||'?';
+  const name=window.selChar?.char_name||'?';
   // Detect channel prefix
   if(msg.startsWith('/p ')){addChat(name,msg.slice(3),'party');broadcastChat(name,msg.slice(3),'party')}
   else if(msg.startsWith('/n ')){addChat(name,msg.slice(3),'nation');broadcastChat(name,msg.slice(3),'nation')}
   else{addChat(name,msg,'normal');broadcastChat(name,msg,'normal')}
 }
 function broadcastChat(name,msg,type){
-  if(!rtCh||!selChar)return;
-  rtCh.send({type:'broadcast',event:'chat',payload:{name,msg,type,faction:selChar.faction}});
+  if(!rtCh||!window.selChar)return;
+  rtCh.send({type:'broadcast',event:'chat',payload:{name,msg,type,faction:window.selChar.faction}});
 }
 
 // ── NATION WAR HUD ────────────────────────────────────────────────
@@ -272,31 +272,31 @@ function endNationWar(){
   nwActive=false;sc('nwHud');
   const winner=nwScore.elmorad>nwScore.karus?'🌟 El Morad':'🔥 Karus';
   showNWNotif('🏆 '+winner+' MENANG!');
-  if(selChar){
-    const isWinner=(selChar.faction==='elmorad'&&nwScore.elmorad>nwScore.karus)||(selChar.faction==='karus'&&nwScore.karus>nwScore.elmorad);
+  if(window.selChar){
+    const isWinner=(window.selChar.faction==='elmorad'&&nwScore.elmorad>nwScore.karus)||(window.selChar.faction==='karus'&&nwScore.karus>nwScore.elmorad);
     const gold=isWinner?NW_CONFIG.rewardGold.winner:NW_CONFIG.rewardGold.loser;
     const xp=isWinner?NW_CONFIG.rewardXP.winner:NW_CONFIG.rewardXP.loser;
-    selChar.gold=(selChar.gold||0)+gold;selChar.xp=(selChar.xp||0)+xp;
+    window.selChar.gold=(window.selChar.gold||0)+gold;window.selChar.xp=(window.selChar.xp||0)+xp;
     addChat('','You received '+gold+' gold and '+xp+' XP!','system');
     window.saveProgress?.();
   }
 }
-function addNWKill(){if(!nwActive||!selChar)return;nwScore[selChar.faction==='elmorad'||selChar.faction==='cahaya'?'elmorad':'karus']++}
+function addNWKill(){if(!nwActive||!window.selChar)return;nwScore[window.selChar.faction==='elmorad'||window.selChar.faction==='cahaya'?'elmorad':'karus']++}
 
 // ── PARTY SYSTEM ──────────────────────────────────────────────────
 let myParty={members:[],leader:null};
-function openParty(){if(!selChar)return;E('partyPanel').classList.remove('off');renderPartyPanel()}
+function openParty(){if(!window.selChar)return;E('partyPanel').classList.remove('off');renderPartyPanel()}
 function renderPartyPanel(){
-  const isLeader=myParty.leader===selChar?.id||myParty.members.length===0;
+  const isLeader=myParty.leader===window.selChar?.id||myParty.members.length===0;
   let html=`<div style="font-family:'Cinzel',serif;font-size:.65rem;color:rgba(201,168,76,.5);text-transform:uppercase;margin-bottom:8px">
     Party Members (${myParty.members.length+1}/${PARTY_CONFIG.maxMembers})</div>`;
   // Leader (self)
-  if(selChar){
+  if(window.selChar){
     html+=`<div class="party-slot">
-      <div class="party-slot-icon">${(RACES[selChar.race]||RACES.human).icon}</div>
+      <div class="party-slot-icon">${(window.RACES[window.selChar.race]||window.RACES.human).icon}</div>
       <div class="party-slot-info">
-        <div class="party-slot-name">👑 ${selChar.char_name} (You)</div>
-        <div class="party-slot-hp"><div class="party-slot-hp-fill" style="width:${G.pl?G.pl.hp/G.pl.maxHp*100:100}%"></div></div>
+        <div class="party-slot-name">👑 ${window.selChar.char_name} (You)</div>
+        <div class="party-slot-hp"><div class="party-slot-hp-fill" style="width:${window.G.pl?window.G.pl.hp/window.G.pl.maxHp*100:100}%"></div></div>
       </div>
     </div>`;
   }
@@ -330,7 +330,7 @@ function joinParty(){
   const code=E('joinCodeInp')?.value.trim();
   if(!code){addChat('','Enter a party code!','system');return}
   addChat('',`Searching for party: ${code}...`,'system');
-  if(rtCh){rtCh.send({type:'broadcast',event:'party_req',payload:{from:selChar?.char_name,code,id:selChar?.id}})}
+  if(rtCh){rtCh.send({type:'broadcast',event:'party_req',payload:{from:window.selChar?.char_name,code,id:window.selChar?.id}})}
 }
 function kickMember(id){myParty.members=myParty.members.filter(m=>m.id!==id);renderPartyPanel()}
 function updPartyHud(){
@@ -346,7 +346,7 @@ function updPartyHud(){
 // ── PK SYSTEM ─────────────────────────────────────────────────────
 let pkMode=false;
 function togglePK(){
-  const zone=ZONES[G.currentZone||'moradon'];
+  const zone=window.ZONES[window.G.currentZone||'moradon'];
   if(zone?.safe){addChat('','Cannot enable PK in safe zone!','system');return}
   pkMode=!pkMode;
   const el=E('pkStatus');if(!el)return;
@@ -357,8 +357,8 @@ function togglePK(){
   addChat('',pkMode?'PK Mode enabled!':'Peace mode enabled','system');
 }
 function isEnemy(faction){
-  if(!selChar)return false;
-  const myFac=selChar.faction==='cahaya'?'elmorad':selChar.faction;
+  if(!window.selChar)return false;
+  const myFac=window.selChar.faction==='cahaya'?'elmorad':window.selChar.faction;
   const theirFac=faction==='cahaya'?'elmorad':faction;
   return myFac!==theirFac;
 }
@@ -366,7 +366,7 @@ function isEnemy(faction){
 // ── NPC DIALOG ────────────────────────────────────────────────────
 let activeNPC=null;
 function openNPC(npcId){
-  const npc=NPCS[npcId];if(!npc)return;
+  const npc=window.NPCS[npcId];if(!npc)return;
   activeNPC=npc;
   sc('npcDialog','on');
   if(typeof Audio!=='undefined') Audio.playSFX('npc_talk');
@@ -380,22 +380,22 @@ function openNPC(npcId){
 }
 function closeNPC(){sc('npcDialog');activeNPC=null}
 function healAtInn(){
-  if(!selChar||!G.pl)return;
-  if((selChar.gold||0)<50){addChat('','Not enough gold! Need 50g.','system');return}
-  if(!G?.pl)return; selChar.gold-=50;G.pl.hp=G.pl.maxHp;G.pl.mp=G.pl.maxMp;
+  if(!window.selChar||!window.G.pl)return;
+  if((window.selChar.gold||0)<50){addChat('','Not enough gold! Need 50g.','system');return}
+  if(!G?.pl)return; window.selChar.gold-=50;window.G.pl.hp=window.G.pl.maxHp;window.G.pl.mp=window.G.pl.maxMp;
   addChat('','Rested at inn. HP/MP fully restored!','system');closeNPC();window.saveProgress?.();
 }
 function gotoZone(zoneId){
-  G.changeZone(zoneId);showZoneBanner(zoneId);
-  addChat('',`Entered: ${ZONES[zoneId]?.name||zoneId}`,'system');
+  window.G.changeZone(zoneId);showZoneBanner(zoneId);
+  addChat('',`Entered: ${window.ZONES[zoneId]?.name||zoneId}`,'system');
 }
 
 // ── INVENTORY PANEL ───────────────────────────────────────────────
 let selItemId=null;
-function openInventory(){if(!selChar)return;E('invPanel').classList.remove('off');renderEquipSlots()}
+function openInventory(){if(!window.selChar)return;E('invPanel').classList.remove('off');renderEquipSlots()}
 function renderEquipSlots(){
   E('invTabEquip').classList.add('active');E('invTabBag').classList.remove('active');E('invTabEnh').classList.remove('active');
-  const eq=selChar.equipment||{};
+  const eq=window.selChar.equipment||{};
   const slots=[
     {key:'weapon',label:'Weapon',icon:'⚔️'},{key:'armor',label:'Armor',icon:'🛡️'},
     {key:'helmet',label:'Helmet',icon:'⛑️'},{key:'gloves',label:'Gloves',icon:'🧤'},
@@ -405,7 +405,7 @@ function renderEquipSlots(){
   ];
   let html='<div class="equip-grid" style="grid-template-columns:1fr 1fr 1fr">';
   slots.forEach(s=>{
-    const iid=eq[s.key];const item=iid?ITEM_DB[iid]:null;const enh=item?.enh||0;
+    const iid=eq[s.key];const item=iid?window.ITEM_DB[iid]:null;const enh=item?.enh||0;
     html+=`<div class="equip-slot${item?' equipped':''}" onclick="selEquipSlot('${s.key}')"
       ${item ? `onmouseenter="window.ItemSystem?.showTooltip('${iid}',event.clientX,event.clientY)" onmouseleave="window.ItemSystem?.hideTooltip()" ontouchstart="window.ItemSystem?.showTooltip('${iid}',event.touches[0].clientX,event.touches[0].clientY)" ontouchend="setTimeout(()=>window.ItemSystem?.hideTooltip(),1500)"` : ''}>
       <div class="es-icon">${item?item.icon:s.icon}</div>
@@ -416,13 +416,13 @@ function renderEquipSlots(){
   E('invBody').innerHTML=html;
 }
 function renderBag(){
-  if(!selChar)return;
+  if(!window.selChar)return;
   E('invTabEquip').classList.remove('active');E('invTabBag').classList.add('active');E('invTabEnh').classList.remove('active');
-  const inv=selChar.inventory||{};const items=Object.entries(inv).filter(([,q])=>q>0);
+  const inv=window.selChar.inventory||{};const items=Object.entries(inv).filter(([,q])=>q>0);
   let html='<div class="inv-grid">';
   for(let i=0;i<20;i++){
     if(i<items.length){
-      const[iid,qty]=items[i];const item=ITEM_DB[iid];if(!item){continue}
+      const[iid,qty]=items[i];const item=window.ITEM_DB[iid];if(!item){continue}
       html+=`<div class="inv-slot has-item" onclick="selBagItem('${iid}')"
         onmouseenter="window.ItemSystem?.showTooltip('${iid}',event.clientX,event.clientY)"
         onmouseleave="window.ItemSystem?.hideTooltip()"
@@ -436,11 +436,11 @@ function renderBag(){
   html+='</div><div class="item-detail-box" id="itemDetailBox"><div style="color:var(--muted);font-size:.68rem;text-align:center;margin-top:8px">Select an item to view details</div></div>';
   E('invBody').innerHTML=html;
 }
-function selEquipSlot(slot){if(!selChar)return;const iid=selChar.equipment?.[slot];if(iid)selBagItem(iid)}
+function selEquipSlot(slot){if(!window.selChar)return;const iid=window.selChar.equipment?.[slot];if(iid)selBagItem(iid)}
 function selBagItem(iid){
-  if(!selChar)return;
-  selItemId=iid;const item=ITEM_DB[iid];if(!item)return;
-  const eq=selChar.equipment||{};const equipped=Object.values(eq).includes(iid);const enh=item.enh||0;
+  if(!window.selChar)return;
+  selItemId=iid;const item=window.ITEM_DB[iid];if(!item)return;
+  const eq=window.selChar.equipment||{};const equipped=Object.values(eq).includes(iid);const enh=item.enh||0;
   let stats='';
   if(item.atk)stats+=`<div>ATK +${item.atk+enh*Math.floor(item.atk*.08)}</div>`;
   if(item.def)stats+=`<div>DEF +${item.def+enh*Math.floor(item.def*.08)}</div>`;
@@ -462,39 +462,39 @@ function selBagItem(iid){
     <div style="margin-top:7px;display:flex;gap:5px">${btns}</div>`;
 }
 function _equipItemUI(iid){
-  const item=ITEM_DB[iid];if(!item||!selChar)return;
-  if(item.jobs&&!item.jobs.includes(selChar.job)){addChat('','Your class cannot use this item!','system');return}
-  if(!selChar.equipment)selChar.equipment={};
+  const item=window.ITEM_DB[iid];if(!item||!window.selChar)return;
+  if(item.jobs&&!item.jobs.includes(window.selChar.job)){addChat('','Your class cannot use this item!','system');return}
+  if(!window.selChar.equipment)window.selChar.equipment={};
   const slot=item.slot||'weapon';
-  const oldId=selChar.equipment[slot];
-  if(oldId){selChar.inventory[oldId]=(selChar.inventory[oldId]||0)+1}
-  selChar.equipment[slot]=iid;
-  selChar.inventory[iid]=Math.max(0,(selChar.inventory[iid]||1)-1);
-  if(selChar.inventory[iid]===0)delete selChar.inventory[iid];
-  if(G.pl)G.pl.applyChar(selChar);
+  const oldId=window.selChar.equipment[slot];
+  if(oldId){window.selChar.inventory[oldId]=(window.selChar.inventory[oldId]||0)+1}
+  window.selChar.equipment[slot]=iid;
+  window.selChar.inventory[iid]=Math.max(0,(window.selChar.inventory[iid]||1)-1);
+  if(window.selChar.inventory[iid]===0)delete window.selChar.inventory[iid];
+  if(window.G.pl)window.G.pl.applyChar(window.selChar);
   renderBag();window.saveProgress?.();
 }
 function _unequipItemUI(iid){
-  if(!selChar||!selChar.equipment)return;
-  for(const s in selChar.equipment){if(selChar.equipment[s]===iid){selChar.equipment[s]=null;selChar.inventory[iid]=(selChar.inventory[iid]||0)+1;if(G.pl)G.pl.applyChar(selChar);renderEquipSlots();window.saveProgress?.();return}}
+  if(!window.selChar||!window.selChar.equipment)return;
+  for(const s in window.selChar.equipment){if(window.selChar.equipment[s]===iid){window.selChar.equipment[s]=null;window.selChar.inventory[iid]=(window.selChar.inventory[iid]||0)+1;if(window.G.pl)window.G.pl.applyChar(window.selChar);renderEquipSlots();window.saveProgress?.();return}}
 }
 function usePotion(iid){
-  const item=ITEM_DB[iid];if(!item||!selChar||!G.pl)return;
-  const qty=selChar.inventory[iid]||0;if(qty<=0)return;
-  if(item.heal){G.pl.hp=Math.min(G.pl.maxHp,G.pl.hp+item.heal);G.fts.push(new FT(G.pl.x,G.pl.y-40,'+'+item.heal+' HP','#40c840',14))}
-  if(item.mana){G.pl.mp=Math.min(G.pl.maxMp,G.pl.mp+item.mana);G.fts.push(new FT(G.pl.x,G.pl.y-40,'+'+item.mana+' MP','#4080ff',14))}
+  const item=window.ITEM_DB[iid];if(!item||!window.selChar||!window.G.pl)return;
+  const qty=window.selChar.inventory[iid]||0;if(qty<=0)return;
+  if(item.heal){window.G.pl.hp=Math.min(window.G.pl.maxHp,window.G.pl.hp+item.heal);window.G.fts.push(new FT(window.G.pl.x,window.G.pl.y-40,'+'+item.heal+' HP','#40c840',14))}
+  if(item.mana){window.G.pl.mp=Math.min(window.G.pl.maxMp,window.G.pl.mp+item.mana);window.G.fts.push(new FT(window.G.pl.x,window.G.pl.y-40,'+'+item.mana+' MP','#4080ff',14))}
   // Elixir / special item buffs
   if(item.buffAtk||item.buffDef||item.buffSpd||item.cure||item.revive){
     if(window.ActiveBuffs) window.ActiveBuffs.apply(iid);
   }
-  selChar.inventory[iid]=qty-1;if(selChar.inventory[iid]===0)delete selChar.inventory[iid];
+  window.selChar.inventory[iid]=qty-1;if(window.selChar.inventory[iid]===0)delete window.selChar.inventory[iid];
   renderBag();
 }
 function sellItem(iid){
-  const item=ITEM_DB[iid];if(!item||!selChar)return;
-  const qty=selChar.inventory[iid]||0;if(qty<=0)return;
-  selChar.gold=(selChar.gold||0)+item.sell;
-  selChar.inventory[iid]=qty-1;if(selChar.inventory[iid]===0)delete selChar.inventory[iid];
+  const item=window.ITEM_DB[iid];if(!item||!window.selChar)return;
+  const qty=window.selChar.inventory[iid]||0;if(qty<=0)return;
+  window.selChar.gold=(window.selChar.gold||0)+item.sell;
+  window.selChar.inventory[iid]=qty-1;if(window.selChar.inventory[iid]===0)delete window.selChar.inventory[iid];
   addChat('','Sold '+item.name+' for '+item.sell+' gold','system');
   renderBag();window.saveProgress?.();
 }
@@ -502,20 +502,20 @@ function sellItem(iid){
 // ── ENHANCEMENT ───────────────────────────────────────────────────
 let enhTarget=null;
 function renderEnhancement(){
-  if(!selChar)return;
+  if(!window.selChar)return;
   E('invTabEquip').classList.remove('active');E('invTabBag').classList.remove('active');E('invTabEnh').classList.add('active');
-  const eq=selChar.equipment||{};
+  const eq=window.selChar.equipment||{};
   let html='<div class="enh-panel"><div style="font-family:Cinzel,serif;font-size:.62rem;color:var(--muted);margin-bottom:6px">Select equipped item to enhance:</div>';
   html+='<div class="inv-grid" style="grid-template-columns:repeat(4,1fr)">';
   for(const s of ['weapon','armor','helmet','gloves','boots','ring1','ring2','amulet','earring']){
-    const iid=eq[s];if(!iid)continue;const item=ITEM_DB[iid];if(!item)continue;
+    const iid=eq[s];if(!iid)continue;const item=window.ITEM_DB[iid];if(!item)continue;
     html+=`<div class="inv-slot has-item${enhTarget===iid?' sel':''}" onclick="setEnhTarget('${iid}')" title="${item.name}">
       ${item.icon}<span class="item-enh">+${item.enh||0}</span></div>`;
   }
   html+='</div>';
   if(enhTarget){
-    const item=ITEM_DB[enhTarget];const enh=item?.enh||0;
-    const rate=ENH_RATES[Math.min(enh,ENH_RATES.length-1)]||{success:5,fail:55,break:40};
+    const item=window.ITEM_DB[enhTarget];const enh=item?.enh||0;
+    const rate=window.ENH_RATES[Math.min(enh,window.ENH_RATES.length-1)]||{success:5,fail:55,break:40};
     const cost=Math.floor((enh+1)*80*(1+enh*.6));
     html+=`<div class="enh-item-preview">
       <div class="enh-icon">${item.icon}</div>
@@ -530,11 +530,11 @@ function renderEnhancement(){
     <div class="enh-cost"><span>Cost:</span><span>💰 ${cost} gold</span></div>
     <div class="enh-cost" style="border-top:1px solid rgba(255,255,255,.04);padding-top:5px">
       <span style="font-size:.6rem;color:var(--muted)">Luna Stone: </span>
-      <span style="color:var(--gold)">${selChar.inventory?.luna_stone||0}x</span>
+      <span style="color:var(--gold)">${window.selChar.inventory?.luna_stone||0}x</span>
       &nbsp;<span style="font-size:.6rem;color:var(--muted)">Chaos Stone: </span>
-      <span style="color:#c9a84c">${selChar.inventory?.chaos_stone||0}x</span>
+      <span style="color:#c9a84c">${window.selChar.inventory?.chaos_stone||0}x</span>
       &nbsp;<span style="font-size:.6rem;color:var(--muted)">Star Stone: </span>
-      <span style="color:#ffcc44">${selChar.inventory?.star_stone||0}x</span>
+      <span style="color:#ffcc44">${window.selChar.inventory?.star_stone||0}x</span>
     </div>
     <div class="enh-result" id="enhResult"></div>
     <div style="display:flex;gap:5px">
@@ -546,27 +546,27 @@ function renderEnhancement(){
 }
 function setEnhTarget(iid){enhTarget=iid;renderEnhancement()}
 function doEnhance(safe){
-  if(!enhTarget){return}const item=ITEM_DB[enhTarget];if(!item)return;
+  if(!enhTarget){return}const item=window.ITEM_DB[enhTarget];if(!item)return;
   const enh=item.enh||0;if(enh>=9){E('enhResult').textContent='Already at maximum +9!';return}
   const cost=Math.floor((enh+1)*80*(1+enh*.6));
-  if((selChar.gold||0)<cost){E('enhResult').innerHTML='<span style="color:#e84040">Not enough gold!</span>';return}
-  if(safe){const ss=selChar.inventory?.star_stone||0;if(ss<=0){E('enhResult').innerHTML='<span style="color:#e84040">No Star Stone!</span>';return}selChar.inventory.star_stone=ss-1}
-  if(!selChar||!G?.pl)return;
-  selChar.gold-=cost;
-  const rate=ENH_RATES[Math.min(enh,ENH_RATES.length-1)];
+  if((window.selChar.gold||0)<cost){E('enhResult').innerHTML='<span style="color:#e84040">Not enough gold!</span>';return}
+  if(safe){const ss=window.selChar.inventory?.star_stone||0;if(ss<=0){E('enhResult').innerHTML='<span style="color:#e84040">No Star Stone!</span>';return}window.selChar.inventory.star_stone=ss-1}
+  if(!window.selChar||!G?.pl)return;
+  window.selChar.gold-=cost;
+  const rate=window.ENH_RATES[Math.min(enh,window.ENH_RATES.length-1)];
   const roll=Math.random()*100;const el=E('enhResult');
   if(safe||roll<rate.success){
     item.enh=(item.enh||0)+1;
     el.textContent=`✨ SUCCESS! ${item.name} +${item.enh}`;el.className='enh-result enh-success';
     if(typeof Audio!=='undefined') Audio.playSFX('enhance_success');
-    if(G.pl)G.pl.applyChar(selChar);
+    if(window.G.pl)window.G.pl.applyChar(window.selChar);
   }else if(roll<rate.success+rate.fail){
     el.textContent='❌ Failed... item unchanged';el.className='enh-result enh-fail';
     if(typeof Audio!=='undefined') Audio.playSFX('enhance_fail');
   }else{
-    const slot=Object.keys(selChar.equipment||{}).find(s=>selChar.equipment[s]===enhTarget);
-    if(slot)selChar.equipment[slot]=null;
-    delete ITEM_DB[enhTarget];enhTarget=null;
+    const slot=Object.keys(window.selChar.equipment||{}).find(s=>window.selChar.equipment[s]===enhTarget);
+    if(slot)window.selChar.equipment[slot]=null;
+    delete window.ITEM_DB[enhTarget];enhTarget=null;
     el.textContent='💥 DESTROYED! Item is gone!';el.className='enh-result enh-break';
     if(typeof Audio!=='undefined') Audio.playSFX('enhance_break');
   }
@@ -574,43 +574,43 @@ function doEnhance(safe){
 }
 
 // ── CHARACTER STATS ────────────────────────────────────────────────
-function openStats(){if(!selChar)return;E('statsPanel2').classList.remove('off');renderStats()}
+function openStats(){if(!window.selChar)return;E('statsPanel2').classList.remove('off');renderStats()}
 function renderStats(){
-  const p=G.pl;const lv=selChar.level||1;
-  const eq=selChar.equipment||{};
+  const p=window.G.pl;const lv=window.selChar.level||1;
+  const eq=window.selChar.equipment||{};
   let bAtk=0,bDef=0,bInt=0,bHp=0,bMp=0,bStr=0,bDex=0,bSpd=0;
   for(const iid of Object.values(eq)){
-    if(!iid)continue;const item=ITEM_DB[iid];if(!item)continue;const e=item.enh||0;
+    if(!iid)continue;const item=window.ITEM_DB[iid];if(!item)continue;const e=item.enh||0;
     if(item.atk)bAtk+=item.atk+e*Math.floor(item.atk*.08);if(item.def)bDef+=item.def+e*Math.floor(item.def*.08);
     if(item.int)bInt+=item.int+e*Math.floor(item.int*.08);if(item.hp)bHp+=item.hp;if(item.mp)bMp+=item.mp;
     if(item.str)bStr+=item.str;if(item.dex)bDex+=item.dex;if(item.spd)bSpd+=item.spd;
   }
-  const isEl=selChar.faction==='elmorad'||selChar.faction==='cahaya';
+  const isEl=window.selChar.faction==='elmorad'||window.selChar.faction==='cahaya';
   E('statsBody').innerHTML=`
     <div style="text-align:center;margin-bottom:10px">
-      <div style="font-size:2rem">${(RACES[selChar.race]||RACES.human).icon}</div>
-      <div style="font-family:'Cinzel Decorative',serif;font-size:.9rem;color:var(--gold)">${selChar.char_name}</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--muted)">${(JOBS[selChar.job]||JOBS.warrior).name} | ${isEl?'🌟 El Morad':'🔥 Karus'}</div>
+      <div style="font-size:2rem">${(window.RACES[window.selChar.race]||window.RACES.human).icon}</div>
+      <div style="font-family:'Cinzel Decorative',serif;font-size:.9rem;color:var(--gold)">${window.selChar.char_name}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--muted)">${(window.JOBS[window.selChar.job]||window.JOBS.warrior).name} | ${isEl?'🌟 El Morad':'🔥 Karus'}</div>
     </div>
     <div class="stat-detail-grid">
       <div class="sd-row"><span class="sd-lbl">Level</span><span class="sd-val">${lv}</span></div>
-      <div class="sd-row"><span class="sd-lbl">Gold</span><span class="sd-val" style="color:#f0c840">${(selChar.gold||0).toLocaleString()}</span></div>
+      <div class="sd-row"><span class="sd-lbl">Gold</span><span class="sd-val" style="color:#f0c840">${(window.selChar.gold||0).toLocaleString()}</span></div>
       <div class="sd-row"><span class="sd-lbl">HP</span><span class="sd-val red">${p?Math.ceil(p.maxHp):'-'}${bHp?'<span style="color:#40c840">+'+bHp+'</span>':''}</span></div>
       <div class="sd-row"><span class="sd-lbl">MP</span><span class="sd-val purple">${p?Math.ceil(p.maxMp):'-'}${bMp?'<span style="color:#40c840">+'+bMp+'</span>':''}</span></div>
       <div class="sd-row"><span class="sd-lbl">ATK</span><span class="sd-val">${p?Math.ceil(p.atk):'-'}${bAtk?'<span style="color:#40c840">+'+bAtk+'</span>':''}</span></div>
       <div class="sd-row"><span class="sd-lbl">DEF</span><span class="sd-val">${p?Math.ceil(p.def):'-'}${bDef?'<span style="color:#40c840">+'+bDef+'</span>':''}</span></div>
-      <div class="sd-row"><span class="sd-lbl">STR</span><span class="sd-val">${selChar.stat_str||0}${bStr?'<span style="color:#40c840">+'+bStr+'</span>':''}</span></div>
-      <div class="sd-row"><span class="sd-lbl">DEX</span><span class="sd-val green">${selChar.stat_dex||0}${bDex?'<span style="color:#40c840">+'+bDex+'</span>':''}</span></div>
-      <div class="sd-row"><span class="sd-lbl">INT</span><span class="sd-val purple">${selChar.stat_int||0}${bInt?'<span style="color:#40c840">+'+bInt+'</span>':''}</span></div>
-      <div class="sd-row"><span class="sd-lbl">Skill Pts</span><span class="sd-val">${selChar.skill_pts||0}</span></div>
-      <div class="sd-row"><span class="sd-lbl">Zone</span><span class="sd-val" style="font-size:.55rem">${ZONES[selChar.current_zone||'moradon']?.name||'-'}</span></div>
-      <div class="sd-row"><span class="sd-lbl">Best Wave</span><span class="sd-val">${selChar.best_wave||0}</span></div>
+      <div class="sd-row"><span class="sd-lbl">STR</span><span class="sd-val">${window.selChar.stat_str||0}${bStr?'<span style="color:#40c840">+'+bStr+'</span>':''}</span></div>
+      <div class="sd-row"><span class="sd-lbl">DEX</span><span class="sd-val green">${window.selChar.stat_dex||0}${bDex?'<span style="color:#40c840">+'+bDex+'</span>':''}</span></div>
+      <div class="sd-row"><span class="sd-lbl">INT</span><span class="sd-val purple">${window.selChar.stat_int||0}${bInt?'<span style="color:#40c840">+'+bInt+'</span>':''}</span></div>
+      <div class="sd-row"><span class="sd-lbl">Skill Pts</span><span class="sd-val">${window.selChar.skill_pts||0}</span></div>
+      <div class="sd-row"><span class="sd-lbl">Zone</span><span class="sd-val" style="font-size:.55rem">${window.ZONES[window.selChar.current_zone||'moradon']?.name||'-'}</span></div>
+      <div class="sd-row"><span class="sd-lbl">Best Wave</span><span class="sd-val">${window.selChar.best_wave||0}</span></div>
     </div>
     <div style="margin-top:8px;display:flex;gap:5px">
       <button class="btn btn-gold" style="flex:1;font-size:.62rem;padding:7px" onclick="openSkillTree()">Skill Tree</button>
       <button class="btn btn-dim" style="flex:1;font-size:.62rem;padding:7px" onclick="document.getElementById('statsPanel2').classList.add('off')">Close</button>
     </div>
-    ${(()=>{ const sb=window.ItemSystem?.getSetBonus(selChar); if(!sb||!Object.keys(sb).length) return '';
+    ${(()=>{ const sb=window.ItemSystem?.getSetBonus(window.selChar); if(!sb||!Object.keys(sb).length) return '';
       return `<div style="margin-top:8px;padding:8px;background:rgba(201,168,76,.06);
         border:1px solid rgba(201,168,76,.2);border-radius:4px">
         <div style="font-family:'Cinzel',serif;font-size:.58rem;color:rgba(201,168,76,.6);
@@ -626,7 +626,7 @@ function renderStats(){
 let curShopId='general',curShopTab=null;
 function openShop(shopId){
   curShopId=shopId||'general';E('shopPanel').classList.remove('off');
-  const shop=SHOPS[curShopId];if(!shop)return;
+  const shop=window.SHOPS[curShopId];if(!shop)return;
   // Build tabs
   const tabs=Object.keys(shop.tabs);curShopTab=tabs[0];
   E('shopTabsRow').innerHTML=tabs.map((t,i)=>`<div class="ov-tab${i===0?' active':''}" id="shopTab_${t}" onclick="renderShopTab('${t}')">${t}</div>`).join('');
@@ -635,13 +635,13 @@ function openShop(shopId){
 }
 function renderShopTab(tab){
   curShopTab=tab;
-  const shop=SHOPS[curShopId];if(!shop)return;
+  const shop=window.SHOPS[curShopId];if(!shop)return;
   document.querySelectorAll('#shopTabsRow .ov-tab').forEach(el=>el.classList.remove('active'));
   const tabEl=E('shopTab_'+tab);if(tabEl)tabEl.classList.add('active');
   const items=shop.tabs[tab]||[];
-  let html=`<div class="shop-gold">💰 Your Gold: ${(selChar?.gold||0).toLocaleString()}</div>`;
+  let html=`<div class="shop-gold">💰 Your Gold: ${(window.selChar?.gold||0).toLocaleString()}</div>`;
   items.forEach(iid=>{
-    const item=ITEM_DB[iid];if(!item)return;
+    const item=window.ITEM_DB[iid];if(!item)return;
     html+=`<div class="shop-item" onclick="buyItem('${iid}')"
       onmouseenter="window.ItemSystem?.showTooltip('${iid}',event.clientX,event.clientY)"
       onmouseleave="window.ItemSystem?.hideTooltip()">
@@ -656,21 +656,21 @@ function renderShopTab(tab){
   E('shopBody').innerHTML=html;
 }
 function buyItem(iid){
-  const item=ITEM_DB[iid];if(!item||!selChar)return;
+  const item=window.ITEM_DB[iid];if(!item||!window.selChar)return;
   if(!item.price){addChat('','This item cannot be purchased.','system');return}
-  if((selChar.gold||0)<item.price){addChat('','Not enough gold!','system');renderShopTab(curShopTab);return}
-  selChar.gold-=item.price;
-  if(item.stack){selChar.inventory[iid]=(selChar.inventory[iid]||0)+1}
-  else{const copyId=iid+'_'+Date.now();ITEM_DB[copyId]={...item,enh:0};selChar.inventory[copyId]=(selChar.inventory[copyId]||0)+1}
+  if((window.selChar.gold||0)<item.price){addChat('','Not enough gold!','system');renderShopTab(curShopTab);return}
+  window.selChar.gold-=item.price;
+  if(item.stack){window.selChar.inventory[iid]=(window.selChar.inventory[iid]||0)+1}
+  else{const copyId=iid+'_'+Date.now();window.ITEM_DB[copyId]={...item,enh:0};window.selChar.inventory[copyId]=(window.selChar.inventory[copyId]||0)+1}
   if(typeof Audio!=='undefined') Audio.playSFX('buy');
   addChat('','Bought: '+item.name+' (-'+item.price+'g)','system');
   renderShopTab(curShopTab);window.saveProgress?.();
 }
 
 // ── DUNGEON ───────────────────────────────────────────────────────
-function openDungeon(){if(!selChar)return;E('dungeonPanel').classList.remove('off');renderDungeons()}
+function openDungeon(){if(!window.selChar)return;E('dungeonPanel').classList.remove('off');renderDungeons()}
 function renderDungeons(){
-  const lv=selChar?.level||1;
+  const lv=window.selChar?.level||1;
   const dlist=[
     {id:'dungeon_goblin',name:'Goblin Cave',    icon:'🟢',diff:'easy',  reqLv:1,  waves:5,  boss:'goblin_king',  rw:{xp:500,gold:100,item:'hpot_sm'}},
     {id:'dungeon_orc',   name:'Orc Fortress',   icon:'🟡',diff:'normal',reqLv:10, waves:8,  boss:'orc_warlord',  rw:{xp:2000,gold:500,item:'chaos_stone'}},
@@ -692,16 +692,16 @@ function renderDungeons(){
   E('dungeonBody').innerHTML=html;
 }
 function startDungeon(zoneId,bossType,waves,rewards){
-  if(!selChar)return;
-  const lv=selChar?.level||1;const zone=ZONES[zoneId];if(!zone||lv<zone.reqLv)return;
-  G.dungeonMode={id:zoneId,bossType,totalWaves:waves,rewards};
+  if(!window.selChar)return;
+  const lv=window.selChar?.level||1;const zone=window.ZONES[zoneId];if(!zone||lv<zone.reqLv)return;
+  window.G.dungeonMode={id:zoneId,bossType,totalWaves:waves,rewards};
   closeAllPanels();startGame();
 }
 
 // ── NATION WAR PANEL ──────────────────────────────────────────────
-function openNWPanel(){if(!selChar)return;E('nwPanel').classList.remove('off');renderNWPanel()}
+function openNWPanel(){if(!window.selChar)return;E('nwPanel').classList.remove('off');renderNWPanel()}
 function renderNWPanel(){
-  const isEl=selChar?.faction==='elmorad'||selChar?.faction==='cahaya';
+  const isEl=window.selChar?.faction==='elmorad'||window.selChar?.faction==='cahaya';
   E('nwBody').innerHTML=`
     <div class="nw-panel">
       <div class="nw-panel-title">⚔️ Nation War — Ronark Land</div>
@@ -727,16 +727,16 @@ function renderNWPanel(){
 }
 function joinNW(){
   if(!nwActive)startNationWar();
-  G.dungeonMode=null;closeAllPanels();gotoZone('ronark');startGame();
+  window.G.dungeonMode=null;closeAllPanels();gotoZone('ronark');startGame();
   addChat('','Joined Nation War in Ronark Land!','system');
 }
 function fmtTime(s){const m=Math.floor(s/60),ss=s%60;return `${m}:${ss.toString().padStart(2,'0')}`}
 
 // ── SKILL TREE ─────────────────────────────────────────────────────
-function openSkillTree(){if(!selChar)return;E('skillTreePanel').classList.remove('off');renderSkillTree()}
+function openSkillTree(){if(!window.selChar)return;E('skillTreePanel').classList.remove('off');renderSkillTree()}
 function renderSkillTree(){
-  const job=selChar?.job||'warrior';const tree=SKILL_TREES[job];if(!tree)return;
-  const learned=selChar.skill_tree||{};const pts=selChar.skill_pts||0;
+  const job=window.selChar?.job||'warrior';const tree=window.SKILL_TREES[job];if(!tree)return;
+  const learned=window.selChar.skill_tree||{};const pts=window.selChar.skill_pts||0;
   let html=`<div class="skill-pts-bar">Skill Points: <span style="color:var(--gold)">${pts}</span></div>`;
   // Passive
   html+=`<div class="skill-section-title">⬆ Passive</div><div class="skill-grid">`;
@@ -759,25 +759,25 @@ function renderSkillTree(){
   E('skillBody').innerHTML=html;
 }
 function learnSkill(sid){
-  if(!selChar||(selChar.skill_pts||0)<=0)return;
-  const job=selChar?.job||'warrior';const tree=SKILL_TREES[job];if(!tree)return;
+  if(!window.selChar||(window.selChar.skill_pts||0)<=0)return;
+  const job=window.selChar?.job||'warrior';const tree=window.SKILL_TREES[job];if(!tree)return;
   const allSkills=[...tree.passive,...tree.active];const s=allSkills.find(x=>x.id===sid);if(!s)return;
-  const learned=selChar.skill_tree||{};
+  const learned=window.selChar.skill_tree||{};
   if((learned[s.id]||0)>=s.maxLv)return;
   if(s.req&&!(learned[s.req]>0))return;
-  selChar.skill_tree[s.id]=(selChar.skill_tree[s.id]||0)+1;
-  selChar.skill_pts=Math.max(0,(selChar.skill_pts||0)-1);
-  if(G.pl)G.pl.applyChar(selChar);
+  window.selChar.skill_tree[s.id]=(window.selChar.skill_tree[s.id]||0)+1;
+  window.selChar.skill_pts=Math.max(0,(window.selChar.skill_pts||0)-1);
+  if(window.G.pl)window.G.pl.applyChar(window.selChar);
   renderSkillTree();window.saveProgress?.();
-  addChat('','Learned: '+(s.name)+' Lv.'+(selChar.skill_tree[s.id]),'system');
+  addChat('','Learned: '+(s.name)+' Lv.'+(window.selChar.skill_tree[s.id]),'system');
 }
 
 // ── TRADE PANEL ───────────────────────────────────────────────────
 let tradeState={myItems:{},myGold:0,theirItems:{},theirGold:0,myAccepted:false,theirAccepted:false};
-function openTrade(){if(!selChar)return;E('tradePanel').classList.remove('off');renderTrade()}
+function openTrade(){if(!window.selChar)return;E('tradePanel').classList.remove('off');renderTrade()}
 function renderTrade(){
-  const inv=selChar?.inventory||{};const items=Object.entries(inv).filter(([,q])=>q>0).slice(0,6);
-  let myGrid='';items.forEach(([iid])=>{const item=ITEM_DB[iid];if(!item)return;myGrid+=`<div class="inv-slot has-item" onclick="addToTrade('${iid}')" title="${item.name}">${item.icon}</div>`});
+  const inv=window.selChar?.inventory||{};const items=Object.entries(inv).filter(([,q])=>q>0).slice(0,6);
+  let myGrid='';items.forEach(([iid])=>{const item=window.ITEM_DB[iid];if(!item)return;myGrid+=`<div class="inv-slot has-item" onclick="addToTrade('${iid}')" title="${item.name}">${item.icon}</div>`});
   for(let i=items.length;i<6;i++)myGrid+='<div class="inv-slot"></div>';
   E('tradeBody').innerHTML=`
     <div style="font-family:'Cinzel',serif;font-size:.65rem;color:rgba(201,168,76,.5);text-transform:uppercase;margin-bottom:8px">
@@ -785,7 +785,7 @@ function renderTrade(){
     </div>
     <div class="trade-grid">
       <div class="trade-side">
-        <div class="trade-side-title">You (${selChar?.char_name||'?'})</div>
+        <div class="trade-side-title">You (${window.selChar?.char_name||'?'})</div>
         <div class="trade-items">${myGrid}</div>
         <div class="trade-gold-row">Gold: <input class="trade-gold-inp" id="tradeGoldInp" type="number" min="0" value="0"> g</div>
       </div>
@@ -808,7 +808,7 @@ function renderTrade(){
       💡 Trade requires both players to accept. Share your party code to find each other online.
     </div>`;
 }
-function addToTrade(iid){addChat('','Added to trade: '+(ITEM_DB[iid]?.name||iid),'system')}
+function addToTrade(iid){addChat('','Added to trade: '+(window.ITEM_DB[iid]?.name||iid),'system')}
 function toggleTradeAccept(){
   tradeState.myAccepted=!tradeState.myAccepted;
   const el=E('myTradeCheck');if(el)el.classList.toggle('accepted',tradeState.myAccepted);
@@ -820,7 +820,7 @@ function cancelTrade(){tradeState={myItems:{},myGold:0,theirItems:{},theirGold:0
 function showLvNotif(){
   const el=E('lvnotif');if(!el)return;
   el.textContent='⬆ LEVEL UP! '+(window.selChar?.level||'');el.classList.add('sh');
-  if(G&&G.pl&&G.pts){for(let i=0;i<28;i++){const a=(i/28)*Math.PI*2,sp=90+Math.random()*140;G.pts.push(new Pt(G.pl.x,G.pl.y,Math.cos(a)*sp,Math.sin(a)*sp,'#ffcc44',5,.75))}}
+  if(G&&window.G.pl&&window.G.pts){for(let i=0;i<28;i++){const a=(i/28)*Math.PI*2,sp=90+Math.random()*140;window.G.pts.push(new Pt(window.G.pl.x,window.G.pl.y,Math.cos(a)*sp,Math.sin(a)*sp,'#ffcc44',5,.75))}}
   setTimeout(()=>el.classList.remove('sh'),2200);
 }
 function showWvNotif(t){const el=E('wvnotif');el.textContent=t;el.classList.add('sh');setTimeout(()=>el.classList.remove('sh'),2600)}
@@ -832,14 +832,14 @@ function startGame(){
   if(!offlineMode&&SB)sc('opill','on');
   sc('pkStatus','on');const el=E('pkStatus');if(el){el.className='pk-peace';el.innerHTML='<div class="pk-indicator"></div><span>PEACE</span>'}
   if(myParty.members.length>0)sc('partyHud','on');
-  for(const k in opMap)delete opMap[k];G.init();initRT();
-  if(selChar)showZoneBanner(G.currentZone||'moradon');
+  for(const k in opMap)delete opMap[k];window.G.init();initRT();
+  if(window.selChar)showZoneBanner(window.G.currentZone||'moradon');
 }
 function useQuickElixir(){
-  if(!selChar||!G?.pl)return;
+  if(!window.selChar||!G?.pl)return;
   const elixirs=['elixir_power','elixir_speed','elixir_guard'];
   for(const eid of elixirs){
-    const qty=selChar.inventory[eid]||0;
+    const qty=window.selChar.inventory[eid]||0;
     if(qty>0){
       usePotion(eid);
       if(typeof Audio!=='undefined') Audio.playSFX('buff');
@@ -855,10 +855,10 @@ function updQuickElixirBtn(){
   const iconEl=document.getElementById('quickElixirIcon');
   const qtyEl=document.getElementById('quickElixirQty');
   const btn=document.getElementById('quickElixirBtn');
-  if(!iconEl||!qtyEl||!selChar)return;
+  if(!iconEl||!qtyEl||!window.selChar)return;
   let total=0, icon='💪';
   for(const eid of elixirs){
-    const q=selChar.inventory[eid]||0; total+=q;
+    const q=window.selChar.inventory[eid]||0; total+=q;
     if(q>0){
       icon=eid==='elixir_speed'?'⚡':eid==='elixir_guard'?'🛡️':'💪'; break;
     }
@@ -869,8 +869,8 @@ function updQuickElixirBtn(){
 }
 
 function useQuickPotion(){
-  if(!G.pl||!selChar)return;
-  const inv=selChar.inventory||{};
+  if(!window.G.pl||!window.selChar)return;
+  const inv=window.selChar.inventory||{};
   const pot=inv.hpot_lg>0?'hpot_lg':inv.hpot_md>0?'hpot_md':inv.hpot_sm>0?'hpot_sm':null;
   if(!pot){addChat('','No HP Potion!','system');return}
   usePotion(pot);

@@ -1,0 +1,4 @@
+# Pahlawan Terakhir — Netlify Redirects
+/gm      /gm/index.html    200
+/gm/     /gm/index.html    200
+/admin   /gm/index.html    302

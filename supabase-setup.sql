@@ -582,3 +582,78 @@ SELECT tablename, rowsecurity AS rls
 FROM pg_tables
 WHERE schemaname = 'public' AND tablename LIKE 'kn_%'
 ORDER BY tablename;
+
+-- ═══════════════════════════════════════════════════════════
+-- v6.2 UPDATE — Tables dari KO database structure
+-- ═══════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS kn_pvp_log (
+  id             UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
+  killer_name    TEXT      NOT NULL,
+  victim_name    TEXT      NOT NULL,
+  killer_faction TEXT,
+  victim_faction TEXT,
+  zone           TEXT      DEFAULT 'ronark',
+  np_gained      INTEGER   DEFAULT 1,
+  gold_dropped   INTEGER   DEFAULT 0,
+  created_at     TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS kn_castle_siege (
+  id             UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
+  castle_name    TEXT      DEFAULT 'Delos',
+  owner_guild    TEXT      DEFAULT NULL,
+  owner_faction  TEXT      DEFAULT NULL,
+  siege_at       TIMESTAMP DEFAULT NULL,
+  last_siege     TIMESTAMP DEFAULT NULL,
+  tax_rate       SMALLINT  DEFAULT 10,
+  created_at     TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS kn_bifrost (
+  id             UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
+  status         TEXT      DEFAULT 'inactive',
+  monument_hp    INTEGER   DEFAULT 100000,
+  destroyer      TEXT      DEFAULT NULL,
+  destroyer_fac  TEXT      DEFAULT NULL,
+  activated_at   TIMESTAMP DEFAULT NULL,
+  closes_at      TIMESTAMP DEFAULT NULL,
+  created_at     TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS kn_nw_ranking (
+  id             UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
+  char_name      TEXT      NOT NULL,
+  faction        TEXT      NOT NULL,
+  nw_kills       INTEGER   DEFAULT 0,
+  nw_deaths      INTEGER   DEFAULT 0,
+  nw_points      INTEGER   DEFAULT 0,
+  season         INTEGER   DEFAULT 1,
+  updated_at     TIMESTAMP DEFAULT now(),
+  UNIQUE(char_name, season)
+);
+
+CREATE TABLE IF NOT EXISTS kn_worldboss_log (
+  id             UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
+  boss_type      TEXT      NOT NULL,
+  char_name      TEXT      NOT NULL,
+  damage_dealt   INTEGER   DEFAULT 0,
+  reward_item    TEXT      DEFAULT NULL,
+  reward_gold    INTEGER   DEFAULT 0,
+  rank           SMALLINT  DEFAULT 0,
+  killed_at      TIMESTAMP DEFAULT now()
+);
+
+-- Kolum tambahan untuk kn_players
+ALTER TABLE kn_players
+  ADD COLUMN IF NOT EXISTS nation_points    INTEGER  DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS pvp_kills        INTEGER  DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS pvp_deaths       INTEGER  DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS bifrost_points   INTEGER  DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS premium_type     SMALLINT DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS premium_expiry   TIMESTAMP DEFAULT NULL;
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_pvp_log_killer  ON kn_pvp_log(killer_name);
+CREATE INDEX IF NOT EXISTS idx_nw_rank_season  ON kn_nw_ranking(season, nw_points DESC);
+CREATE INDEX IF NOT EXISTS idx_wb_log_boss     ON kn_worldboss_log(boss_type, killed_at);

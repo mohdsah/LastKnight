@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<!-- ═══════════════════════════════════════════════════
+     PAHLAWAN TERAKHIR — KO Classic Mobile RPG
+     Versi  : 4.2
+     Tarikh : 16 Mac 2026
+     Netlify: last-knight.netlify.app
+     ═══════════════════════════════════════════════════ -->
+<meta name="version" content="5.4">
+<meta name="build-date" content="2026-03-16">
+<!-- ══ VIEWPORT: Portrait lock ══ -->
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Pahlawan Terakhir — KO Classic</title>
+
+<!-- ══ PWA MANIFEST ══ -->
+<link rel="manifest" href="manifest.json">
+
+<!-- ══ PWA iOS (Safari) ══ -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pahlawan Terakhir">
+<link rel="apple-touch-icon" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192.png">
+
+<!-- ══ PWA Android / Chrome ══ -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#c9a84c">
+<meta name="msapplication-TileColor" content="#06060e">
+<meta name="msapplication-TileImage" content="icons/icon-144.png">
+
+<!-- ══ SEO & Share ══ -->
+<meta name="description" content="Knight Online Classic Mobile RPG — El Morad vs Karus. Farm, level up, rebut Castle!">
+<meta property="og:title" content="Pahlawan Terakhir — KO Classic">
+<meta property="og:description" content="Knight Online Classic Mobile RPG">
+<meta property="og:image" content="icons/icon-512.png">
+<meta property="og:type" content="game">
+
+<!-- ══ Favicon ══ -->
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32"  href="icons/icon-96.png">
+
+<!-- ══ Fonts ══ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/init.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- ══ Data Layer ══ -->
+<script src="js/data.js"></script>
+<script src="js/maps/zones.js"></script>
+<script src="js/maps/gates.js"></script>
+<script src="js/maps/bosses.js"></script>
+<!-- ══ New Systems ══ -->
+<script src="js/systems/monsters.js"></script>
+<script src="js/systems/equipment.js"></script>
+<script src="js/systems/leaderboard.js"></script>
+<script src="js/systems/worldboss.js"></script>
+<script src="js/systems/dailyquest.js"></script>
+<script src="js/systems/autosave.js"></script>
+<!-- ══ Core ══ -->
+<script src="js/audio.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+<script src="js/farming.js"></script>
+<script src="js/skill-master.js"></script>
+<script src="js/inn-upgrade.js"></script>
+<script src="js/powerup-store.js"></script>
+<script src="js/pvp-guild-quest.js"></script>
+ <script>
+/* Pahlawan Terakhir v5.4 — Final Setup */
+
+// Setup selepas semua JS loaded
+window.addEventListener('load', function() {
+  // Daftar alias untuk init.js
+  if (typeof doLogout === 'function')       window._doLogout_real  = doLogout;
+  if (typeof togglePK === 'function')       window._togglePK       = togglePK;
+  if (typeof useQuickPotion==='function')   window._useQuickPotion = useQuickPotion;
+  if (typeof sendChat === 'function')       window._sendChat       = sendChat;
+  if (typeof openInn === 'function')        window._openInn        = openInn;
+  if (typeof openBlacksmith==='function')   window._openBlacksmith = openBlacksmith;
+  if (typeof saveProgress==='function')     window.saveProgress    = saveProgress;
+
+  // Override startGame
+  if (typeof startGame !== 'undefined') {
+    startGame = function() {
+      const z = window.G?.currentZone || window.selChar?.current_zone || 'moradon';
+      window.gotoAndPlay(z);
+    };
+  }
+
+  // Override showLvNotif
+  if (typeof showLvNotif !== 'undefined') {
+    const _orig = showLvNotif;
+    showLvNotif = function() {
+      try { _orig(); } catch(e) {}
+      const fl=document.getElementById('lvFlash');
+      if(fl){fl.classList.add('sh');setTimeout(()=>fl.classList.remove('sh'),600);}
+    };
+  }
+
+  // Expose updateExpBar globally
+  window.updateExpBar = updateExpBar;
+
+  console.log('%c✅ PT v5.4 Ready', 'color:#40c840;font-size:12px');
+});
+
+function updateExpBar() {
+  const sc = window.selChar; if(!sc)return;
+  const lv=sc.level||1, xp=sc.xp||0;
+  const need=typeof expRequired==='function'?expRequired(lv):lv*100;
+  const pct=Math.min(100,xp/need*100);
+  ['xpBFull','xpB'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.width=pct+'%';});
+  const xv=document.getElementById('xpV');if(xv)xv.textContent=xp.toLocaleString()+'/'+need.toLocaleString();
+  const lv2=document.getElementById('lvB');if(lv2)lv2.textContent='LV '+lv;
+}
+</script>
+
+<script>
+// ── GATE TELEPORT SYSTEM ──────────────────────────────────────────
+// Portal/gate yang boleh diklik dalam game untuk tukar zone
+const GATES = {
+  moradon: [
+    { id:'gate_ronark',  name:'⚔️ Gate ke Ronark Land', to:'ronark',         x:1350, y:1200, icon:'🚪', color:'#cc3333' },
+    { id:'gate_el',      name:'🌟 Gate ke El Morad',    to:'elmorad',         x:1200, y:1050, icon:'🌟', color:'#c9a84c', faction:'elmorad' },
+    { id:'gate_kr',      name:'🔥 Gate ke Karus',       to:'karus',           x:1200, y:1350, icon:'🔥', color:'#cc3333', faction:'karus' },
+    { id:'gate_cz',      name:'🏰 Gate ke Colony Zone', to:'cz',              x:1050, y:1200, icon:'🏰', color:'#ff8800' },
+  ],
+  elmorad: [
+    { id:'gate_to_moradon_el', name:'🏙️ Gate ke Moradon', to:'moradon', x:420, y:420, icon:'🚪', color:'#888' },
+    { id:'gate_to_ronark_el',  name:'⚔️ Gate ke Ronark',  to:'ronark',  x:350, y:350, icon:'⚔️', color:'#cc3333' },
+  ],
+  karus: [
+    { id:'gate_to_moradon_kr', name:'🏙️ Gate ke Moradon', to:'moradon', x:1980, y:2020, icon:'🚪', color:'#888' },
+    { id:'gate_to_ronark_kr',  name:'⚔️ Gate ke Ronark',  to:'ronark',  x:2050, y:2050, icon:'⚔️', color:'#cc3333' },
+  ],
+  ronark: [
+    { id:'gate_back_moradon',  name:'🏙️ Kembali ke Moradon', to:'moradon', x:1200, y:680,  icon:'🚪', color:'#888' },
+    { id:'gate_dungeon_goblin',name:'🟢 Masuk Gua Goblin',    to:'dungeon_goblin', x:900,  y:750, icon:'🟢', color:'#40c840' },
+    { id:'gate_dungeon_orc',   name:'🟡 Masuk Benteng Orc',   to:'dungeon_orc',    x:1500, y:750, icon:'🟡', color:'#c8c840' },
+    { id:'gate_dungeon_dark',  name:'🔴 Masuk Kuil Gelap',    to:'dungeon_dark',   x:1200, y:900, icon:'🔴', color:'#c84040' },
+  ],
+  dungeon_goblin:  [ { id:'gate_out_goblin',  name:'🚪 Keluar Dungeon', to:'ronark', x:1200, y:1200, icon:'🚪', color:'#888' } ],
+  dungeon_orc:     [ { id:'gate_out_orc',     name:'🚪 Keluar Dungeon', to:'ronark', x:1200, y:1200, icon:'🚪', color:'#888' } ],
+  dungeon_dark:    [ { id:'gate_out_dark',     name:'🚪 Keluar Dungeon', to:'ronark', x:1200, y:1200, icon:'🚪', color:'#888' } ],
+  cz:              [ { id:'gate_out_cz',       name:'🚪 Keluar CZ',      to:'moradon',x:1500, y:1500, icon:'🚪', color:'#888' } ],
+};
+
+let activeGateZone = null;
+
+function getZoneGates(zoneId) {
+  return GATES[zoneId] || [];
+}
+
+function drawGates() {
+  const cx = window.cx;  // canvas context dari game.js
+  if (!cx) return;
+  const gates = getZoneGates(window.G?.currentZone || 'moradon');
+  if (!gates.length) return;
+  const time = Date.now() / 1000;
+  for (const gate of gates) {
+    // Faction gate — hanya tunjuk kepada faction berkenaan
+    if (gate.faction && window.selChar?.faction !== gate.faction &&
+        window.selChar?.faction !== (gate.faction === 'elmorad' ? 'cahaya' : 'karus')) continue;
+
+    cx.save();
+    cx.translate(gate.x, gate.y);
+
+    // Aura bergelombang
+    const pulse = 0.85 + Math.sin(time * 3 + gate.x * 0.01) * 0.15;
+    cx.shadowColor = gate.color;
+    cx.shadowBlur  = 20 * pulse;
+
+    // Lingkaran gate
+    const grd = cx.createRadialGradient(0, 0, 0, 0, 0, 35);
+    grd.addColorStop(0, gate.color + '44');
+    grd.addColorStop(1, gate.color + '00');
+    cx.fillStyle = grd;
+    cx.beginPath(); cx.arc(0, 0, 35, 0, Math.PI * 2); cx.fill();
+
+    // Border gate berputar
+    cx.strokeStyle = gate.color;
+    cx.lineWidth = 2;
+    cx.setLineDash([6, 4]);
+    cx.lineDashOffset = -time * 20;
+    cx.beginPath(); cx.arc(0, 0, 28, 0, Math.PI * 2); cx.stroke();
+    cx.setLineDash([]);
+
+    // Ikon gate
+    cx.font = '22px serif';
+    cx.textAlign = 'center';
+    cx.shadowBlur = 0;
+    cx.fillText(gate.icon, 0, 8);
+
+    // Label nama gate
+    cx.fillStyle = gate.color;
+    cx.font = 'bold 9px "Share Tech Mono",monospace';
+    cx.shadowColor = '#000'; cx.shadowBlur = 4;
+    cx.fillText(gate.name.replace(/[^\x20-\x7E]/g, '').trim().slice(0,18), 0, -32);
+
+    cx.shadowBlur = 0;
+
+    // Hint [MASUK] bila player dekat
+    if (G.pl) {
+      const dist = Math.hypot(G.pl.x - gate.x, G.pl.y - gate.y);
+      if (dist < 60) {
+        cx.fillStyle = '#fff';
+        cx.font = 'bold 10px "Cinzel",serif';
+        cx.fillText('[MASUK]', 0, -46);
+        // Auto show gate panel
+        if (!document.getElementById('gatePanel') || document.getElementById('gatePanel').classList.contains('off')) {
+          showGatePanel(gate);
+        }
+      }
+    }
+    cx.restore();
+  }
+}
+
+let pendingGate = null;
+function showGatePanel(gate) {
+  if (pendingGate?.id === gate.id) return;
+  pendingGate = gate;
+  const p = document.getElementById('gatePanel');
+  if (!p) return;
+  p.classList.remove('off');
+  document.getElementById('gateName').textContent = gate.name;
+  const dest = window.ZONES[gate.to];
+  document.getElementById('gateDesc').textContent = dest ? dest.desc : gate.to;
+  document.getElementById('gateIcon').textContent = gate.icon;
+  document.getElementById('gateDestName').textContent = dest?.name || gate.to;
+  const typeTag = dest?.pvp ? '⚔️ PVP Zone' : dest?.safe ? '🛡️ Safe Zone' : dest?.type === 'dungeon' ? '🏰 Dungeon' : '🗺️ Field';
+  document.getElementById('gateTypeTag').textContent = typeTag;
+}
+function hideGatePanel() {
+  pendingGate = null;
+  document.getElementById('gatePanel')?.classList.add('off');
+}
+function enterGate() {
+  if (!pendingGate) return;
+  const to = pendingGate.to;
+  hideGatePanel();
+
+  // Set dungeon mode jika perlu
+  if (to.startsWith('dungeon_')) {
+    const d = {
+      dungeon_goblin:{id:'dungeon_goblin',bossType:'goblin_king', totalWaves:5, rewards:{xp:500,  gold:100,  item:'hpot_sm'}},
+      dungeon_orc:   {id:'dungeon_orc',   bossType:'orc_warlord', totalWaves:8, rewards:{xp:2000, gold:500,  item:'chaos_stone'}},
+      dungeon_dark:  {id:'dungeon_dark',  bossType:'demon_king',  totalWaves:12,rewards:{xp:8000, gold:2000, item:'star_stone'}}
+    };
+    window.G.dungeonMode = d[to] || null;
+  } else {
+    window.G.dungeonMode = null;
+  }
+
+  // Guna changeZone (smooth) kalau dah dalam game, G.init() untuk first load
+  if (window.G && window.G.pl && window.G.state === 'play') {
+    // Dah dalam game — tukar zone tanpa restart penuh
+    window.G.changeZone(to);
+    if (window.selChar) window.selChar.current_zone = to;
+    // Update zone label
+    const zl = document.getElementById('zoneLabel');
+    if (zl) zl.textContent = (window.ZONES?.[to]?.name || to).toUpperCase();
+    if (typeof window.showZoneBanner === 'function') window.showZoneBanner(to);
+    if (typeof Audio !== 'undefined') Audio.playZoneMusic(to);
+    // Boss timer
+    const btp = document.getElementById('bossTimerPanel');
+    if (btp) btp.classList.toggle('off', window.ZONES?.[to]?.type === 'town');
+    // Save zone
+    if (typeof window.saveProgress === 'function') window.saveProgress();
+  } else {
+    // Belum dalam game — init penuh
+    window.gotoAndPlay(to);
+  }
+}
+
+// Hook drawGates ke dalam game draw
+const _origGDraw = G.draw.bind(G);
+G.draw = function() {
+  _origGDraw();
+  const _cx = window.cx, _cam = window.cam;
+  if (this.state === 'play' && _cx && _cam) {
+    _cx.save(); _cx.translate(-_cam.x, -_cam.y);
+    drawGates();
+    _cx.restore();
+  }
+};
+
+// Check gate proximity dalam game tick
+const _origGTick = G.tick.bind(G);
+G.tick = function(dt) {
+  _origGTick(dt);
+  if (this.state === 'play' && window.G?.pl) {
+    const gates = getZoneGates(window.G.currentZone || 'moradon');
+    let nearAny = false;
+    for (const gate of gates) {
+      if (gate.faction && window.selChar?.faction !== gate.faction &&
+          window.selChar?.faction !== (gate.faction==='elmorad'?'cahaya':'karus')) continue;
+      const dist = Math.hypot(G.pl.x - gate.x, G.pl.y - gate.y);
+      if (dist < 55) { nearAny = true; showGatePanel(gate); break; }
+    }
+    if (!nearAny && pendingGate) hideGatePanel();
+  }
+};
+</script>
+
+<!-- ══ PWA: Service Worker + Install Prompt ══ -->
+<script>
+// ── 1. Daftar Service Worker ──────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => {
+        console.log('[PWA] Service Worker registered:', reg.scope);
+        // Semak update
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateBanner();
+            }
+          });
+        });
+      })
+      .catch(err => console.warn('[PWA] SW registration failed:', err));
+  });
+}
+
+// ── 2. Install Prompt (Android Chrome) ───────────────
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Tunjuk banner install selepas 3 saat
+  setTimeout(showInstallBanner, 3000);
+});
+
+window.addEventListener('appinstalled', () => {
+  console.log('[PWA] App installed!');
+  hideInstallBanner();
+  deferredPrompt = null;
+});
+
+function showInstallBanner() {
+  const b = document.getElementById('installBanner');
+  if (b && deferredPrompt) b.classList.remove('off');
+}
+function hideInstallBanner() {
+  const b = document.getElementById('installBanner');
+  if (b) b.classList.add('off');
+}
+async function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log('[PWA] Install outcome:', outcome);
+  deferredPrompt = null;
+  hideInstallBanner();
+}
+
+// ── 3. Update banner ─────────────────────────────────
+function showUpdateBanner() {
+  const b = document.getElementById('updateBanner');
+  if (b) b.classList.remove('off');
+}
+function applyUpdate() {
+  navigator.serviceWorker.controller?.postMessage('skipWaiting');
+  window.location.reload();
+}
+
+// ── 4. Portrait Lock (Screen Orientation API) ────────
+async function lockPortrait() {
+  try {
+    if (screen.orientation && screen.orientation.lock) {
+      await screen.orientation.lock('portrait');
+      console.log('[PWA] Portrait locked');
+    }
+  } catch(e) {
+    // Gagal lock — CSS fallback akan handle
+    console.log('[PWA] Orientation lock not supported, using CSS fallback');
+  }
+}
+// Lock portrait bila app mula
+document.addEventListener('DOMContentLoaded', lockPortrait);
+// Lock balik bila visibility berubah
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) lockPortrait();
+});
+
+// ── 5. Fullscreen bila game start ────────────────────
+function requestFullscreen() {
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+}
+// Auto fullscreen pada first tap
+let fullscreenDone = false;
+document.addEventListener('touchstart', () => {
+  if (!fullscreenDone) { fullscreenDone = true; requestFullscreen(); }
+}, { once: true });
+
+// Signal init.js that all JS is loaded
+if (typeof window._flush === 'function') window._flush();
+</script>
+
+<!-- ══ Install Banner HTML ══ -->
+<div id="installBanner" class="off" style="
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:linear-gradient(0deg,#0a0814,rgba(10,8,20,.97));
+  border-top:2px solid rgba(201,168,76,.4);
+  padding:12px 16px 16px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 -4px 20px rgba(0,0,0,.6)">
+  <img src="icons/icon-72.png" style="width:48px;height:48px;border-radius:10px;flex-shrink:0" alt="icon">
+  <div style="flex:1">
+    <div style="font-family:'Cinzel',serif;font-size:.82rem;color:#c9a84c;font-weight:700">Pasang Pahlawan Terakhir</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:#6a6050;margin-top:2px">Pasang sebagai app untuk pengalaman terbaik</div>
+  </div>
+  <button onclick="installApp()" style="
+    background:linear-gradient(135deg,rgba(201,168,76,.25),rgba(201,168,76,.1));
+    border:1px solid rgba(201,168,76,.5);border-radius:4px;
+    color:#c9a84c;font-family:'Cinzel',serif;font-size:.7rem;
+    font-weight:700;letter-spacing:.08em;padding:8px 14px;cursor:pointer;
+    white-space:nowrap">⬇ Pasang</button>
+  <button onclick="hideInstallBanner()" style="
+    background:none;border:none;color:#6a6050;font-size:1.2rem;
+    cursor:pointer;padding:4px;flex-shrink:0">✕</button>
+</div>
+
+<!-- ══ Update Banner HTML ══ -->
+<div id="updateBanner" class="off" style="
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:linear-gradient(135deg,#0a1408,rgba(8,14,6,.97));
+  border-bottom:2px solid rgba(64,200,64,.4);
+  padding:10px 16px;display:flex;align-items:center;gap:10px">
+  <div style="flex:1;font-family:'Cinzel',serif;font-size:.72rem;color:#40c840">🔄 Versi baru tersedia!</div>
+  <button onclick="applyUpdate()" style="
+    background:rgba(64,200,64,.15);border:1px solid rgba(64,200,64,.4);
+    border-radius:3px;color:#40c840;font-family:'Cinzel',serif;font-size:.65rem;
+    padding:6px 12px;cursor:pointer">Kemaskini</button>
+  <button onclick="document.getElementById('updateBanner').classList.add('off')" style="
+    background:none;border:none;color:#6a6050;font-size:1rem;cursor:pointer">✕</button>
+</div>
+
+<!-- ══ GATE TELEPORT PANEL ══ -->
+<div id="gatePanel" class="off" style="
+  position:fixed;bottom:145px;left:50%;transform:translateX(-50%);
+  z-index:15;width:min(300px,85vw);pointer-events:all">
+  <div style="
+    background:linear-gradient(135deg,rgba(6,4,16,.97),rgba(10,6,20,.97));
+    border:1px solid rgba(201,168,76,.45);border-radius:6px;
+    box-shadow:0 0 30px rgba(0,0,0,.8),0 0 20px rgba(201,168,76,.1);
+    overflow:hidden">
+    <!-- Header -->
+    <div style="background:rgba(0,0,0,.4);padding:8px 14px;border-bottom:1px solid rgba(201,168,76,.15);
+      display:flex;align-items:center;gap:8px">
+      <span id="gateIcon" style="font-size:1.3rem">🚪</span>
+      <div style="flex:1">
+        <div id="gateName" style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold);letter-spacing:.06em">Gate</div>
+        <div id="gateTypeTag" style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:1px">Zone</div>
+      </div>
+      <button onclick="hideGatePanel()" style="background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:2px">✕</button>
+    </div>
+    <!-- Body -->
+    <div style="padding:10px 14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-family:'Cinzel',serif;font-size:.6rem;color:var(--muted);letter-spacing:.1em">DESTINASI:</span>
+        <span id="gateDestName" style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold)">—</span>
+      </div>
+      <div id="gateDesc" style="font-family:'Crimson Text',serif;font-size:.72rem;color:var(--muted);line-height:1.5;margin-bottom:10px"></div>
+      <button onclick="enterGate()" style="
+        width:100%;padding:10px;font-family:'Cinzel',serif;font-size:.75rem;font-weight:700;
+        letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;
+        background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(201,168,76,.08));
+        border:1px solid rgba(201,168,76,.5);color:var(--gold);transition:all .15s">
+        ⚡ Masuk Sekarang
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: INN ══ -->
+<div id="innPanel" class="overlay-panel off">
+  <div class="ov-box">
+    <div class="ov-header">
+      <div class="ov-title" id="innTitle">🏠 Inn</div>
+      <div class="ov-close" onclick="document.getElementById('innPanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body" id="innBody"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: BLACKSMITH ══ -->
+<div id="blacksmithPanel" class="overlay-panel off">
+  <div class="ov-box">
+    <div class="ov-header">
+      <div class="ov-title" id="bsTitle">⚒️ Pandai Besi</div>
+      <div class="ov-close" onclick="document.getElementById('blacksmithPanel').classList.add('off');upgradeTarget=null">✕</div>
+    </div>
+    <div class="ov-body" id="bsBody"></div>
+  </div>
+</div>
+
+<!-- ══ INN BUFF BAR ══ -->
+<div id="innBuffBar" style="
+  display:none;position:fixed;top:48px;left:8px;z-index:11;
+  display:flex;gap:4px;flex-wrap:wrap;max-width:200px;pointer-events:none"></div>
+
+<!-- ══ IN-GAME SLIDE-UP MENU ══ -->
+<div id="ingameMenu">
+  <div class="igm-close-row">
+    <div class="igm-drag" onclick="closeIngameMenu()"></div>
+  </div>
+  <div class="igm-grid">
+    <div class="igm-btn" onclick="openInventory();closeIngameMenu()">
+      <span class="igm-icon">🎒</span>Inventori
+    </div>
+    <div class="igm-btn" onclick="openSkillTree();closeIngameMenu()">
+      <span class="igm-icon">✨</span>Skills
+    </div>
+    <div class="igm-btn" onclick="openStats();closeIngameMenu()">
+      <span class="igm-icon">📊</span>Stats
+    </div>
+    <div class="igm-btn" onclick="openStatAlloc();closeIngameMenu()">
+      <span class="igm-icon">📈</span>Stat Pts
+    </div>
+    <div class="igm-btn" onclick="openParty();closeIngameMenu()">
+      <span class="igm-icon">👥</span>Party
+    </div>
+    <div class="igm-btn" onclick="openNWPanel();closeIngameMenu()">
+      <span class="igm-icon">⚔️</span>Nation War
+    </div>
+    <div class="igm-btn" onclick="openMarket();closeIngameMenu()">
+      <span class="igm-icon">🏪</span>Market
+    </div>
+    <div class="igm-btn" onclick="openGuild();closeIngameMenu()">
+      <span class="igm-icon">🏰</span>Guild
+    </div>
+    <div class="igm-btn" onclick="openQuests();closeIngameMenu()">
+      <span class="igm-icon">🎯</span>Quest
+    </div>
+    <div class="igm-btn" onclick="openCastleSiege();closeIngameMenu()">
+      <span class="igm-icon">⚔️</span>Siege
+    </div>
+    <div class="igm-btn igm-purple" onclick="openPowerUpStore();closeIngameMenu()">
+      <span class="igm-icon">💎</span>Store
+    </div>
+    <div class="igm-btn" onclick="openCZPanel();closeIngameMenu()">
+      <span class="igm-icon">🏰</span>Colony
+    </div>
+    <div class="igm-btn" onclick="Audio&&Audio.openVolumePanel();closeIngameMenu()">
+      <span class="igm-icon">🔊</span>Muzik
+    </div>
+    <div class="igm-btn" onclick="openDungeon();closeIngameMenu()">
+      <span class="igm-icon">🏚️</span>Dungeon
+    </div>
+    <div class="igm-btn igm-red" onclick="closeIngameMenu();goMenu()">
+      <span class="igm-icon">⌂</span>Menu
+    </div>
+    <div class="igm-btn igm-red" onclick="closeIngameMenu();doLogout()">
+      <span class="igm-icon">⏻</span>Keluar
+    </div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: POWER-UP STORE ══ -->
+<div id="pstorePanel" class="overlay-panel off">
+  <div class="ov-box" style="border-color:rgba(170,68,255,.4)">
+    <div class="ov-header" style="border-bottom-color:rgba(170,68,255,.15)">
+      <div style="flex:1">
+        <div class="ov-title" style="color:#aa44ff">💎 Power-Up Store</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--gold)">
+          💎 <span id="pstorePoints">0</span> Point
+        </div>
+      </div>
+      <button class="btn btn-blue btn-xs" onclick="openTopUp()" style="margin-right:8px">Top-Up</button>
+      <div class="ov-close" onclick="document.getElementById('pstorePanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body">
+      <!-- Category Tabs -->
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="pstore-tab btn btn-dim btn-xs active" data-cat="weapon" onclick="renderPStore('weapon')">⚔️ Senjata</button>
+        <button class="pstore-tab btn btn-dim btn-xs" data-cat="armor" onclick="renderPStore('armor')">🛡️ Armor</button>
+        <button class="pstore-tab btn btn-dim btn-xs" data-cat="enhance" onclick="renderPStore('enhance')">⭐ Stone</button>
+        <button class="pstore-tab btn btn-dim btn-xs" data-cat="buff" onclick="renderPStore('buff')">📜 Buff</button>
+        <button class="pstore-tab btn btn-dim btn-xs" data-cat="costume" onclick="renderPStore('costume')">👑 Costume</button>
+      </div>
+      <div id="pstoreBody" style="max-height:50vh;overflow-y:auto"></div>
+      <div class="status-msg" id="pstoreMsg" style="margin-top:6px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: TOP-UP ══ -->
+<div id="topupPanel" class="overlay-panel off">
+  <div class="ov-box" style="border-color:rgba(170,68,255,.35)">
+    <div class="ov-header" style="border-bottom-color:rgba(170,68,255,.15)">
+      <div class="ov-title" style="color:#aa44ff">💎 Top-Up Point</div>
+      <div class="ov-close" onclick="document.getElementById('topupPanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body" id="topupBody" style="max-height:60vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: COSTUME ══ -->
+<div id="costumePanel" class="overlay-panel off">
+  <div class="ov-box">
+    <div class="ov-header">
+      <div class="ov-title">👑 Costume</div>
+      <div class="ov-close" onclick="document.getElementById('costumePanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body" id="costumeBody"></div>
+  </div>
+</div>
+
+<!-- ══ Premium Buff Bar ══ -->
+<div id="premiumBuffBar" style="
+  display:none;position:fixed;top:68px;left:8px;z-index:11;
+  display:flex;gap:4px;flex-wrap:wrap;max-width:200px;pointer-events:none"></div>
+
+<!-- ══ PvP HUD ══ -->
+<div id="pvpHUD" style="position:fixed;top:68px;right:8px;z-index:11;
+  display:none;align-items:center;gap:6px;
+  background:rgba(0,0,0,.7);border:1px solid rgba(200,50,50,.25);
+  border-radius:4px;padding:4px 8px;pointer-events:none">
+</div>
+
+<!-- ══ OVERLAY: MARKET ══ -->
+<div id="marketPanel" class="overlay-panel off">
+  <div class="ov-box">
+    <div class="ov-header">
+      <div class="ov-title">🏪 Market Board</div>
+      <div class="ov-close" onclick="document.getElementById('marketPanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body">
+      <div class="ov-tabs" id="marketTabs" style="margin-bottom:10px">
+        <div class="ov-tab active" onclick="renderMarket('browse')">🔍 Semak Imbas</div>
+        <div class="ov-tab" onclick="renderMarket('sell')">💰 Jual Item</div>
+        <div class="ov-tab" onclick="renderMarket('mylistings')">📋 Listing Saya</div>
+      </div>
+      <div id="marketBody" style="max-height:55vh;overflow-y:auto"></div>
+      <div class="status-msg" id="marketStatus" style="margin-top:6px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: GUILD ══ -->
+<div id="guildPanel" class="overlay-panel off">
+  <div class="ov-box">
+    <div class="ov-header">
+      <div class="ov-title">🏰 Guild</div>
+      <div class="ov-close" onclick="document.getElementById('guildPanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body" id="guildBody" style="max-height:58vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: QUEST ══ -->
+<div id="questPanel" class="overlay-panel off">
+  <div class="ov-box">
+    <div class="ov-header">
+      <div class="ov-title">🎯 Quest</div>
+      <div class="ov-close" onclick="document.getElementById('questPanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body" id="questBody" style="max-height:58vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: CASTLE SIEGE ══ -->
+<div id="siegePanel" class="overlay-panel off">
+  <div class="ov-box" style="border-color:rgba(200,50,50,.4)">
+    <div class="ov-header" style="border-bottom-color:rgba(200,50,50,.2)">
+      <div class="ov-title" style="color:#e84040">🏰 Castle Siege</div>
+      <div class="ov-close" onclick="document.getElementById('siegePanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body" id="siegeBody" style="max-height:58vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: SKILL TRAINER ══ -->
+<div id="skillTrainerPanel" class="overlay-panel off">
+  <div class="ov-box">
+    <div class="ov-header">
+      <div class="ov-title" id="skillTrainerTitle">📚 Guru Kemahiran</div>
+      <div class="ov-close" onclick="document.getElementById('skillTrainerPanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body" id="skillTrainerBody"></div>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: MASTER CLASS ══ -->
+<div id="masterPanel" class="overlay-panel off">
+  <div class="ov-box" style="border-color:rgba(255,215,0,.4);box-shadow:0 0 40px rgba(255,215,0,.1),0 0 80px rgba(0,0,0,.9)">
+    <div class="ov-header" style="border-bottom-color:rgba(255,215,0,.2)">
+      <div class="ov-title" id="masterTitle" style="color:#ffd700">⭐ Guru Master</div>
+      <div class="ov-close" onclick="document.getElementById('masterPanel').classList.add('off')">✕</div>
+    </div>
+    <div class="ov-body" id="masterBody"></div>
+  </div>
+</div>
+
+<!-- ══ MASTER NOTIF ══ -->
+<div id="masterNotif" style="position:fixed;top:35%;left:50%;transform:translateX(-50%);
+  font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,4vw,1.8rem);
+  color:#ffd700;text-shadow:0 0 30px #ffd700,0 0 60px rgba(255,215,0,.4);
+  pointer-events:none;z-index:55;opacity:0;transition:opacity .6s;
+  text-align:center;background:rgba(0,0,0,.7);border:1px solid rgba(255,215,0,.3);
+  border-radius:6px;padding:10px 24px"></div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<div class="page active" id="page-topupMgmt">
+  <div class="page-header"><div class="page-title">💎 Top-Up Manager</div><div class="page-sub">Urus permohonan top-up dan cipta kod</div></div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📋 Permohonan Pending</div>
+      <button class="btn btn-gold btn-xs" onclick="loadTopupRequests()">↺ Refresh</button>
+    </div>
+    <div class="card-body" style="padding:0">
+      <table class="gm-table">
+        <thead><tr><th>Watak</th><th>Nama Penuh</th><th>RM</th><th>Points</th><th>Ref No</th><th>Tarikh</th><th>Aksi</th></tr></thead>
+        <tbody id="topupRequestBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-header"><div class="card-title">🎟️ Jana Kod Top-Up</div></div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Points</label><input type="number" class="gm-inp" id="codePoints" value="100" min="10"></div>
+          <div class="form-group"><label class="form-label">Kuantiti</label><input type="number" class="gm-inp" id="codeQty" value="1" min="1" max="50"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Prefix Kod</label><input class="gm-inp" id="codePrefix" value="TOPUP" maxlength="10"></div>
+        <button class="btn btn-gold btn-full" onclick="generateTopupCodes()">🎟️ Jana Kod</button>
+        <div class="status-msg" id="codeStatus" style="margin-top:6px"></div>
+        <div id="generatedCodes" style="display:none;margin-top:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold)">Kod Dijana:</span>
+            <button class="btn btn-dim btn-xs" onclick="copyAllCodes()">📋 Salin</button>
+          </div>
+          <div id="codesList" style="font-family:Share Tech Mono,monospace;font-size:.68rem;background:rgba(0,0,0,.4);padding:10px;border-radius:4px;max-height:150px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">💳 Bagi Point Manual</div></div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Nama Watak</label><input class="gm-inp" id="grantCharName" placeholder="Nama watak..."></div>
+        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Jumlah Points</label><input type="number" class="gm-inp" id="grantPoints" value="100" min="1"></div>
+        <div class="form-group" style="margin-bottom:10px"><label class="form-label">Sebab</label><input class="gm-inp" id="grantReason" placeholder="cth: Hadiah event..."></div>
+        <button class="btn btn-purple btn-full" onclick="grantPointsManual()">💳 Bagi Point</button>
+        <div class="status-msg" id="grantStatus" style="margin-top:6px"></div>
+      </div>
+    </div>
+  </div>
+</div>

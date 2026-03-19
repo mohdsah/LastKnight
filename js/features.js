@@ -14,7 +14,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
   // ── BIFROST ────────────────────────────────────────
   if (window.ZONES) {
-    ZONES['bifrost'] = {
+    window.ZONES['bifrost'] = {
       name: 'Bifrost',
       icon: '🌈',
       type: 'event',
@@ -30,7 +30,7 @@ window.addEventListener('DOMContentLoaded', function() {
     };
 
     // ── FORGOTTEN TEMPLE ───────────────────────────
-    ZONES['forgotten_temple'] = {
+    window.ZONES['forgotten_temple'] = {
       name: 'Forgotten Temple',
       icon: '🏛️',
       type: 'dungeon',
@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', function() {
     };
 
     // ── ESLANT ─────────────────────────────────────
-    ZONES['eslant'] = {
+    window.ZONES['eslant'] = {
       name: 'Eslant',
       icon: '🏔️',
       type: 'field',
@@ -85,13 +85,13 @@ window.addEventListener('DOMContentLoaded', function() {
 
   // ── BOSS SPAWNS for new zones ───────────────────
   if (window.BOSS_SPAWNS) {
-    BOSS_SPAWNS['bifrost'] = [
+    window.BOSS_SPAWNS['bifrost'] = [
       { type:'isiloon',    x:1500, y:1500, spawnEvery:240, timer:120, active:false, label:'👑 Isiloon' },
     ];
-    BOSS_SPAWNS['forgotten_temple'] = [
+    window.BOSS_SPAWNS['forgotten_temple'] = [
       { type:'bone_dragon',x:1200, y:1200, spawnEvery:999, timer:999, active:false, label:'🐲 Bone Dragon' },
     ];
-    BOSS_SPAWNS['eslant'] = [
+    window.BOSS_SPAWNS['eslant'] = [
       { type:'felankor',   x:1000, y:1000, spawnEvery:300, timer:180, active:false, label:'🐉 Felankor' },
     ];
   }
@@ -384,7 +384,7 @@ window.addEventListener('load', function() {
       }
     };
 
-    console.log('[PvP] ✓ Hooked into G.tick / G.draw');
+    console.log('[PvP] ✓ Hooked into window.G.tick / window.G.draw');
   }, 200);
 
   // Auto-init PvP when entering CZ
@@ -534,11 +534,11 @@ const NpcShop = (() => {
     const goldEl = document.getElementById('shopGoldDisplay');
     if (goldEl) goldEl.textContent = gold.toLocaleString();
 
-    const ITEM_DB = window.ITEM_DB || {};
+    const window.ITEM_DB = window.ITEM_DB || {};
     const RARITY = { common:'#aaa', uncommon:'#4af', rare:'#fa0', epic:'#c4f', legendary:'#f84', mythic:'#f4f' };
 
     body.innerHTML = items.map(iid => {
-      const item = ITEM_DB[iid];
+      const item = window.ITEM_DB[iid];
       if (!item) return '';
       const canAfford = gold >= (item.price || 0);
       const col = RARITY[item.rarity] || '#aaa';
@@ -669,7 +669,7 @@ const InvVisual = (() => {
     const ch = window.selChar;
     if (!ch) return;
     const eq = ch.equipment || {};
-    const ITEM_DB = window.ITEM_DB || {};
+    const window.ITEM_DB = window.ITEM_DB || {};
 
     const slots = [
       { key:'helmet', label:'Topi',         icon:'⛑️', pos:'top-center'    },
@@ -686,7 +686,7 @@ const InvVisual = (() => {
     // Compute total stats from equipment
     let totalAtk=0, totalDef=0, totalHp=0, totalMp=0, totalInt=0;
     for (const [slot, iid] of Object.entries(eq)) {
-      const it = ITEM_DB[iid]; if (!it) continue;
+      const it = window.ITEM_DB[iid]; if (!it) continue;
       const enh = it.enh || 0;
       if (it.atk) totalAtk += it.atk + enh * Math.floor(it.atk * .08);
       if (it.def) totalDef += it.def + enh * Math.floor(it.def * .08);
@@ -698,7 +698,7 @@ const InvVisual = (() => {
     // Build equipment grid HTML
     function slotHTML(s) {
       const iid = eq[s.key];
-      const item = iid ? ITEM_DB[iid] : null;
+      const item = iid ? window.ITEM_DB[iid] : null;
       const enh  = item?.enh || 0;
       const rar  = item?.rarity || 'common';
       const glow = item ? (RARITY_GLOW[rar] || 'none') : 'none';
@@ -715,8 +715,8 @@ const InvVisual = (() => {
         </div>`;
     }
 
-    const JOBS = window.JOBS || {};
-    const jObj = JOBS[ch.job] || {};
+    const window.JOBS = window.JOBS || {};
+    const jObj = window.JOBS[ch.job] || {};
     const FACES = window.FACE_ICONS || {};
     const faceArr = FACES[ch.faction] || ['⚔️'];
     const faceIcon = faceArr[ch.face_idx % faceArr.length] || '⚔️';
@@ -787,7 +787,7 @@ const InvVisual = (() => {
     const ch = window.selChar;
     if (!ch) return;
     const iid = ch.equipment?.[slotKey];
-    const ITEM_DB = window.ITEM_DB || {};
+    const window.ITEM_DB = window.ITEM_DB || {};
     const box = document.getElementById('eqDetailBox');
     if (!box) return;
 
@@ -795,7 +795,7 @@ const InvVisual = (() => {
       box.innerHTML = `<div style="color:var(--muted);font-size:.65rem;text-align:center">Slot ${slotKey} kosong — pergi ke beg untuk equip.</div>`;
       return;
     }
-    const item = ITEM_DB[iid];
+    const item = window.ITEM_DB[iid];
     if (!item) return;
     const enh = item.enh || 0;
     const rar = item.rarity || 'common';
@@ -860,7 +860,7 @@ const InvVisual = (() => {
     const ch = window.selChar;
     if (!ch) return;
     const inv = ch.inventory || {};
-    const ITEM_DB = window.ITEM_DB || {};
+    const window.ITEM_DB = window.ITEM_DB || {};
     const RARITY_COL = { common:'#aaa',uncommon:'#4af',rare:'#fa0',epic:'#c4f',legendary:'#f84',mythic:'#f4f' };
 
     let html = `
@@ -880,7 +880,7 @@ const InvVisual = (() => {
     for (let i = 0; i < total; i++) {
       if (i < entries.length) {
         const [iid, qty] = entries[i];
-        const item = ITEM_DB[iid];
+        const item = window.ITEM_DB[iid];
         if (!item) { html += '<div class="inv-slot-v2"></div>'; continue; }
         const rar = item.rarity || 'common';
         const col = RARITY_COL[rar] || '#aaa';
@@ -909,8 +909,8 @@ const InvVisual = (() => {
 
   function selectBagItem(iid) {
     const ch = window.selChar;
-    const ITEM_DB = window.ITEM_DB || {};
-    const item = ITEM_DB[iid];
+    const window.ITEM_DB = window.ITEM_DB || {};
+    const item = window.ITEM_DB[iid];
     if (!item || !ch) return;
     const box = document.getElementById('invDetailV2');
     if (!box) return;
