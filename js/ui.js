@@ -71,8 +71,15 @@ function startLoad(){
 // ── LOGIN CREATURE ─────────────────────────────────────────────────
 function initLoginCreature(){
   const lcc=E('loginCreatureCanvas');if(!lcc)return;
-  const lw=Math.min(480,window.innerWidth),lh=Math.min(400,window.innerWidth*.65);
-  lcc.width=lw;lcc.height=lh;
+  // Reserve ~260px for login card at bottom, rest goes to creature
+  const cardH = 260;
+  const avail = window.innerHeight - cardH;
+  const lw=Math.min(400,window.innerWidth);
+  const lh=Math.min(avail, Math.min(380, window.innerWidth*.85));
+  lcc.width=lw; lcc.height=lh;
+  lcc.style.bottom = cardH + 'px';
+  lcc.style.height  = lh + 'px';
+  lcc.style.width   = lw + 'px';
   const lx=lcc.getContext('2d');let t=0;
   function draw(t){
     lx.clearRect(0,0,lw,lh);const cx2=lw/2,cy2=lh*.78,sc2=lh/400;
@@ -454,7 +461,7 @@ function selBagItem(iid){
     <div class="item-detail-stat">${stats||'<div>Special item</div>'}</div>
     <div style="margin-top:7px;display:flex;gap:5px">${btns}</div>`;
 }
-function equipItem(iid){
+function _equipItemUI(iid){
   const item=ITEM_DB[iid];if(!item||!selChar)return;
   if(item.jobs&&!item.jobs.includes(selChar.job)){addChat('','Your class cannot use this item!','system');return}
   if(!selChar.equipment)selChar.equipment={};
@@ -467,7 +474,7 @@ function equipItem(iid){
   if(G.pl)G.pl.applyChar(selChar);
   renderBag();window.saveProgress?.();
 }
-function unequipItem(iid){
+function _unequipItemUI(iid){
   if(!selChar||!selChar.equipment)return;
   for(const s in selChar.equipment){if(selChar.equipment[s]===iid){selChar.equipment[s]=null;selChar.inventory[iid]=(selChar.inventory[iid]||0)+1;if(G.pl)G.pl.applyChar(selChar);renderEquipSlots();window.saveProgress?.();return}}
 }

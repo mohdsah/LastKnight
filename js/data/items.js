@@ -57,9 +57,7 @@ const RARITY_COLOR={
 
 // ── LEVEL TABLE (EXP diperlukan per level) ───────────
 // Formula KO klasik: base * (level^1.8)
-function expRequired(lv){
-  return Math.floor(100 * Math.pow(lv, 1.8));
-}
+// expRequired defined in config.js
 // Stat point dapat setiap level
 
 

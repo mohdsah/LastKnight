@@ -90,14 +90,23 @@ async function doLogin() {
     const email = toFakeEmail(usr);
 
     // Login dengan Supabase Auth
-    const { data: authData, error: authErr } = await SB.auth.signInWithPassword({ email, password: pwd });
+    let authData, authErr;
+    try {
+      const res = await SB.auth.signInWithPassword({ email, password: pwd });
+      authData = res.data; authErr = res.error;
+    } catch(fetchErr) {
+      // Network error (Failed to fetch, no internet, etc)
+      setLgSt('Tiada sambungan internet. Cuba Offline Mode.','err');
+      return;
+    }
 
     if (authErr) {
-      // Cuba detect jenis error
       if (authErr.message.includes('Invalid login credentials') || authErr.message.includes('invalid_credentials')) {
         setLgSt('Username atau password salah!','err');
       } else if (authErr.message.includes('Email not confirmed')) {
-        setLgSt('Email belum disahkan. Semak inbox anda.','err');
+        setLgSt('Email belum disahkan.','err');
+      } else if (authErr.message.includes('fetch') || authErr.message.includes('network')) {
+        setLgSt('Gagal sambung server. Cuba Offline Mode.','err');
       } else {
         setLgSt('Login gagal: ' + authErr.message,'err');
       }
@@ -358,7 +367,7 @@ function initCharCreate() {
   Object.entries(window.RACES).filter(([,r]) => r.fac===pendingFaction).forEach(([k,r]) => {
     const d = document.createElement('div');
     d.className = 'cc-option' + (pendingRace===k ? ' ' + (pendingFaction==='elmorad'?'sel':'sel-red') : '');
-    d.innerHTML = `${r.icon} ${r.name}`; d.onclick = () => setRace(k); rl.appendChild(d);
+    d.innerHTML = `<span style="font-size:1.4rem">${r.icon}</span><span>${r.name}</span>`; d.onclick = () => setRace(k); rl.appendChild(d);
     if (!pendingRace) pendingRace = k;
   });
   if (!pendingRace) pendingRace = Object.keys(window.RACES).find(k => window.RACES[k].fac===pendingFaction);
@@ -366,7 +375,7 @@ function initCharCreate() {
   Object.entries(window.JOBS).forEach(([k,j]) => {
     const d = document.createElement('div');
     d.className = 'cc-option' + (pendingJob===k ? ' ' + (pendingFaction==='elmorad'?'sel':'sel-red') : '');
-    d.innerHTML = `${j.icon} ${j.name}`; d.onclick = () => setJob(k); jl.appendChild(d);
+    d.innerHTML = `<span style="font-size:1.4rem">${j.icon}</span><span>${j.name}</span>`; d.onclick = () => setJob(k); jl.appendChild(d);
   });
   if (!pendingJob) pendingJob = 'warrior';
   setRace(pendingRace); setJob('warrior');

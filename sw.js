@@ -3,7 +3,7 @@
    Cache semua fail untuk offline play
    ═══════════════════════════════════════════════════ */
 
-const CACHE_NAME  = 'pahlawan-terakhir-v18';
+const CACHE_NAME  = 'pahlawan-terakhir-v19';
 const CACHE_FILES = [
   '/',
   './index.html',

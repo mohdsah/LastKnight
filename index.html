@@ -163,9 +163,11 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
     </div>
     <div class="login-btns">
       <button class="ko-btn ko-btn-login" onclick="doLogin()">Login</button>
-      <button class="ko-btn ko-btn-cancel" onclick="cancelLogin()">Cancel</button>
       <button class="ko-btn ko-btn-reg" onclick="doRegister()">New Account</button>
-      <button class="ko-btn ko-btn-offline" onclick="skipConfig()">Offline</button>
+      <div class="login-btns-secondary">
+        <button class="ko-btn ko-btn-cancel" onclick="cancelLogin()">Cancel</button>
+        <button class="ko-btn ko-btn-offline" onclick="skipConfig()">Offline Mode</button>
+      </div>
     </div>
     <div class="login-status st-info" id="lgStatus">Enter your ID & password</div>
   </div>
@@ -196,31 +198,55 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 
 <!-- ══ CHAR CREATE ══ -->
 <div id="charCreateSc" class="sc off">
-  <div class="cc-left">
-    <div><div class="cc-section-title">Race</div><div id="raceList"></div></div>
-    <div><div class="cc-section-title">Class</div><div id="jobList"></div></div>
-    <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
-      <div style="font-family:'Cinzel',serif;font-size:.58rem;color:var(--muted)">Face</div>
-      <button class="stat-btn" onclick="cycleFace(-1)">◀</button>
-      <button class="stat-btn" onclick="cycleFace(1)">▶</button>
+  <div class="cc-wrap">
+
+    <!-- Title -->
+    <div class="cc-title">⚔ Cipta Watak</div>
+
+    <!-- Avatar + Face row -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+      <button class="cc-face-btn" onclick="cycleFace(-1)">◀</button>
+      <div class="cc-face-preview">
+        <span id="ccAvatarIcon">⚔️</span>
+      </div>
+      <button class="cc-face-btn" onclick="cycleFace(1)">▶</button>
     </div>
-  </div>
-  <div class="cc-center">
-    <div class="cc-avatar-box">
-      <span id="ccAvatarIcon" style="position:relative;z-index:1;font-size:4.8rem">⚔️</span>
+
+    <!-- Race -->
+    <div class="cc-section">
+      <div class="cc-section-label">Race</div>
+      <div class="cc-options" id="raceList"></div>
     </div>
-  </div>
-  <div class="cc-right">
-    <div class="bp-display">Bonus Points: <span id="bpCount">5</span></div>
-    <div id="statsPanel"></div>
-    <div class="job-desc" id="jobDesc">Select a class to view description.</div>
-    <div class="cc-section-title" style="margin-top:4px">Character Name</div>
-    <input type="text" class="cc-name-inp" id="ccName" placeholder="Enter name..." maxlength="16">
-    <div class="status st-err" id="ccStatus" style="font-size:.6rem"></div>
-    <div style="display:flex;flex-direction:column;gap:5px;margin-top:auto;padding-top:7px">
-      <button class="btn btn-gold" style="width:100%;padding:11px;font-size:.75rem" onclick="createCharacter()">Create Character ▶</button>
-      <button class="btn btn-dim" style="width:100%;padding:8px;font-size:.62rem" onclick="backToFaction()">◀ Back</button>
+
+    <!-- Class -->
+    <div class="cc-section">
+      <div class="cc-section-label">Class</div>
+      <div class="cc-options" id="jobList"></div>
+      <div class="job-desc" id="jobDesc" style="margin-top:8px">Select a class to view description.</div>
     </div>
+
+    <!-- Stats -->
+    <div class="cc-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div class="cc-section-label" style="margin-bottom:0">Stats</div>
+        <div class="bp-display">Bonus Points: <span id="bpCount">5</span></div>
+      </div>
+      <div id="statsPanel"></div>
+    </div>
+
+    <!-- Name -->
+    <div class="cc-section">
+      <div class="cc-section-label">Character Name</div>
+      <input type="text" class="cc-name-inp" id="ccName" placeholder="Enter name..." maxlength="16" autocomplete="off">
+      <div class="status st-err" id="ccStatus" style="font-size:.6rem;margin-top:4px"></div>
+    </div>
+
+    <!-- Buttons -->
+    <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:8px">
+      <button class="btn btn-gold" style="width:100%;padding:13px;font-size:.78rem" onclick="createCharacter()">Create Character ▶</button>
+      <button class="btn btn-dim" style="width:100%;padding:9px;font-size:.65rem" onclick="backToFaction()">◀ Back</button>
+    </div>
+
   </div>
 </div>
 
@@ -654,6 +680,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 <script src="js/farming.js"></script>
 <script src="js/skill-master.js"></script>
 <script src="js/inn-upgrade.js"></script>
+<script src="js/systems/upgrade-system.js"></script>
 <script src="js/powerup-store.js"></script>
 <script src="js/pvp-guild-quest.js"></script>
 <script src="js/features.js"></script>
@@ -675,6 +702,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 <script src="js/systems/hero-sprite.js"></script>
 <script src="js/systems/tiles.js"></script>
 <script src="js/systems/items.js"></script>
+<script src="js/systems/world-map.js"></script>
+<script src="js/systems/social.js"></script>
+<script src="js/systems/tech.js"></script>
 
  <script>
 /* Pahlawan Terakhir v5.0 — Final Setup */
@@ -1207,6 +1237,27 @@ if (typeof window._flush === 'function') window._flush();
     </div>
     <div class="igm-btn" onclick="openDungeon();closeIngameMenu()">
       <span class="igm-icon">🏚️</span>Dungeon
+    </div>
+    <div class="igm-btn" onclick="typeof WorldMap!=='undefined'&&WorldMap.open();closeIngameMenu()">
+      <span class="igm-icon">🗺️</span>World Map
+    </div>
+    <div class="igm-btn" onclick="typeof Achievements!=='undefined'&&Achievements.openPanel();closeIngameMenu()">
+      <span class="igm-icon">🏆</span>Achievement
+    </div>
+    <div class="igm-btn" onclick="typeof EventSystem!=='undefined'&&EventSystem.openPanel();closeIngameMenu()">
+      <span class="igm-icon">📅</span>Event
+    </div>
+    <div class="igm-btn" onclick="typeof GlobalChat!=='undefined'&&GlobalChat.openPanel();closeIngameMenu()">
+      <span class="igm-icon">💬</span>Chat Global
+    </div>
+    <div class="igm-btn" onclick="typeof NPCQuest!=='undefined'&&NPCQuest.openPanel(window.G?.currentZone);closeIngameMenu()">
+      <span class="igm-icon">🎯</span>Quest NPC
+    </div>
+    <div class="igm-btn" onclick="typeof Duel!=='undefined'&&Duel.openPanel();closeIngameMenu()">
+      <span class="igm-icon">⚔️</span>Duel 1v1
+    </div>
+    <div class="igm-btn" onclick="typeof LuckySpin!=='undefined'&&LuckySpin.openPanel();closeIngameMenu()">
+      <span class="igm-icon">🎰</span>Lucky Spin
     </div>
     <div class="igm-btn igm-red" onclick="closeIngameMenu();goMenu()">
       <span class="igm-icon">⌂</span>Menu

@@ -246,6 +246,60 @@ CREATE TABLE IF NOT EXISTS kn_daily_quests (
   UNIQUE(char_name, quest_date)
 );
 
+
+-- ════════════════════════════════════════════════════════════════════
+-- BAHAGIAN 3B: TABLE SOSIAL & ACHIEVEMENT
+-- ════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS kn_achievements (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  char_name  TEXT NOT NULL,
+  account_id UUID,
+  ach_id     TEXT NOT NULL,
+  unlocked_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(char_name, ach_id)
+);
+
+CREATE TABLE IF NOT EXISTS kn_titles (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  char_name  TEXT NOT NULL,
+  title      TEXT NOT NULL,
+  active     BOOLEAN DEFAULT false,
+  earned_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS kn_global_chat (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  char_name  TEXT,
+  faction    TEXT,
+  level      INT DEFAULT 1,
+  message    TEXT NOT NULL,
+  type       TEXT DEFAULT 'normal',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS kn_npc_quests (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  char_name   TEXT NOT NULL,
+  account_id  UUID,
+  quest_id    TEXT NOT NULL,
+  progress    JSONB DEFAULT '{}',
+  done        BOOLEAN DEFAULT false,
+  accepted_at TIMESTAMPTZ DEFAULT NOW(),
+  completed_at TIMESTAMPTZ,
+  UNIQUE(char_name, quest_id)
+);
+
+CREATE TABLE IF NOT EXISTS kn_lucky_spin_log (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  char_name  TEXT,
+  item_id    TEXT,
+  item_name  TEXT,
+  rarity     TEXT,
+  cost_type  TEXT DEFAULT 'points',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ════════════════════════════════════════════════════════════════════
 -- BAHAGIAN 4: MIGRATE KOLUM (selamat untuk DB sedia ada)
 -- ════════════════════════════════════════════════════════════════════
@@ -259,6 +313,8 @@ ALTER TABLE kn_players    ADD COLUMN IF NOT EXISTS quest_progress  JSONB DEFAULT
 ALTER TABLE kn_players    ADD COLUMN IF NOT EXISTS inventory       JSONB DEFAULT '{}';
 ALTER TABLE kn_players    ADD COLUMN IF NOT EXISTS equipment       JSONB DEFAULT '{}';
 ALTER TABLE kn_players    ADD COLUMN IF NOT EXISTS skill_tree      JSONB DEFAULT '{}';
+ALTER TABLE kn_players    ADD COLUMN IF NOT EXISTS sockets         JSONB DEFAULT '{}';
+ALTER TABLE kn_players    ADD COLUMN IF NOT EXISTS refines         JSONB DEFAULT '{}';
 ALTER TABLE kn_leaderboard ADD COLUMN IF NOT EXISTS zone           TEXT DEFAULT 'moradon';
 
 -- ════════════════════════════════════════════════════════════════════
